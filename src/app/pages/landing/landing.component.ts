@@ -1,5 +1,5 @@
 import { ButtonModule } from 'primeng/button';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -10,4 +10,15 @@ import { RouterModule } from '@angular/router';
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',
 })
-export class LandingComponent {}
+export class LandingComponent {
+  @ViewChild('learnMore') learnMore?: ElementRef;
+
+  scrollToLearnMore() {
+    if (this.learnMore) {
+      this.learnMore.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }
+}
