@@ -1,0 +1,27 @@
+.p-menubar {
+  background-color: #f7f8fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 20px;
+}
+
+.p-menubar img {
+  vertical-align: middle;
+}
+
+.p-menubar span {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 10px;
+}
+
+.p-menubar .p-menubar-start img {
+  margin-right: 10px;
+}
+
+.p-button-rounded {
+  margin-right: 10px;
+}
+
+.p-menubar-end img {
+  border-radius: 50%;
+}
