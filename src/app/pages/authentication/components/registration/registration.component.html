@@ -1,0 +1,85 @@
+<div
+  class="surface-ground px-4 py-5 md:px-6 lg:px-8 w-screen h-screen flex justify-content-center align-items-center"
+>
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="flex justify-content-end mb-2">
+      <button
+        pButton
+        pRipple
+        label="Back"
+        icon="pi pi-arrow-left"
+        class="p-button-text"
+        (click)="goToLoginCall()"
+      ></button>
+    </div>
+
+    <div class="text-center mb-5">
+      <img
+        src="assets/signup.png"
+        alt="studentlog logo as signup"
+        height="50"
+        class="mb-1"
+      />
+      <p class="text-600 font-medium line-height-3">Become a member.</p>
+    </div>
+
+    <div>
+      <label for="firstName" class="block text-900 font-medium mb-2"
+        >First name</label
+      >
+      <input
+        id="firstName"
+        type="text"
+        placeholder="First name"
+        pInputText
+        class="w-full mb-3"
+      />
+
+      <label for="lastName" class="block text-900 font-medium mb-2"
+        >Last name</label
+      >
+      <input
+        id="lastName"
+        type="text"
+        placeholder="Last name"
+        pInputText
+        class="w-full mb-3"
+      />
+
+      <label for="email1" class="block text-900 font-medium mb-2">Email</label>
+      <input
+        id="email1"
+        type="text"
+        placeholder="Email address"
+        pInputText
+        class="w-full mb-3"
+      />
+
+      <label for="password1" class="block text-900 font-medium mb-2"
+        >Password</label
+      >
+      <input
+        id="password1"
+        type="password"
+        placeholder="Password"
+        pInputText
+        class="w-full mb-3"
+      />
+
+      <label for="password2" class="block text-900 font-medium mb-2"
+        >Confirm Password</label
+      >
+      <input
+        id="password2"
+        type="password"
+        placeholder="Password"
+        pInputText
+        class="w-full mb-3"
+      />
+
+      <div class="w-full flex justify-content-center">
+        <button pButton pRipple label="Submit" class="w-6"></button>
+      </div>
+    </div>
+  </div>
+</div>
