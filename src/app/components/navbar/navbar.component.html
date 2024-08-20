@@ -1,11 +1,12 @@
 <p-menubar>
   <ng-template pTemplate="start">
-    <div class="d-flex align-items-center">
+    <div class="flex align-items-center">
       <button
         pButton
         type="button"
         icon="pi pi-bars"
         class="p-button-rounded p-button-text"
+        (click)="toggleSidebar()"
       ></button>
       <span>Dashboard</span>
     </div>
