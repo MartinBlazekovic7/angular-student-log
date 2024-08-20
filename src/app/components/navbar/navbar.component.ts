@@ -13,9 +13,11 @@ import { AvatarModule } from 'primeng/avatar';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
+  isLoggedIn = false;
+
   constructor(private sidebarService: SidebarService) {}
 
   toggleSidebar() {
-    this.sidebarService.changeSidebarState(true); // or false depending on what you need
+    this.sidebarService.changeSidebarState(true);
   }
 }

@@ -1,3 +1,4 @@
+@if(isLoggedIn) {
 <p-menubar>
   <ng-template pTemplate="start">
     <div class="flex align-items-center">
@@ -22,3 +23,8 @@
     </div>
   </ng-template>
 </p-menubar>
+} @else {
+<div class="navbar-not-logged">
+  <img src="assets/logo.png" alt="studentlog logo" />
+</div>
+}
