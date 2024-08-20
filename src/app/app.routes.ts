@@ -22,4 +22,28 @@ export const routes: Routes = [
         (m) => m.DashboardComponent
       ),
   },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/settings/settings.component').then(
+        (m) => m.SettingsComponent
+      ),
+  },
+  {
+    path: 'history',
+    loadComponent: () =>
+      import('./pages/history/history.component').then(
+        (m) => m.HistoryComponent
+      ),
+  },
+  {
+    path: 'teams',
+    loadComponent: () =>
+      import('./pages/teams/teams.component').then((m) => m.TeamsComponent),
+  },
+  {
+    path: '**',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
 ];

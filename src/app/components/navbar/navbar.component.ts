@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
 import { SidebarService } from '../../services/sidebar.service';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, MenubarModule, ButtonModule],
+  imports: [CommonModule, MenubarModule, ButtonModule, AvatarModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })

@@ -5,6 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { SidebarService } from '../../services/sidebar.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,12 +16,15 @@ import { SidebarService } from '../../services/sidebar.service';
     AvatarModule,
     ButtonModule,
     RippleModule,
+    RouterModule,
   ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent implements OnInit {
   @ViewChild('sidebarRef') sidebarRef!: Sidebar;
+
+  sidebarVisible: boolean = false;
 
   constructor(private sidebarService: SidebarService) {}
 
@@ -30,9 +34,11 @@ export class SidebarComponent implements OnInit {
     });
   }
 
+  closeSidebar(): void {
+    this.sidebarService.changeSidebarState(false);
+  }
+
   closeCallback(e: any): void {
     this.sidebarRef.close(e);
   }
-
-  sidebarVisible: boolean = false;
 }
