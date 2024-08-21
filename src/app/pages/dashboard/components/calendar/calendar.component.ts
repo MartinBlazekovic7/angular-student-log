@@ -108,5 +108,7 @@ export class CalendarComponent {
       day.cssClass = 'cal-day-selected';
       this.selectedMonthViewDay = day;
     }
+
+    console.log(this.selectedDays);
   }
 }
