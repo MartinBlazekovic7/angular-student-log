@@ -4,7 +4,6 @@ import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
 import { SidebarService } from '../../services/sidebar.service';
 import { AvatarModule } from 'primeng/avatar';
-import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
@@ -29,26 +28,26 @@ export class NavbarComponent {
   authService = inject(AuthService);
   router = inject(Router);
 
-  items: MenuItem[] | undefined;
+  items = [
+    {
+      label: 'Profile',
+      icon: 'pi pi-user',
+    },
+    {
+      label: 'Settings',
+      icon: 'pi pi-cog',
+    },
+    {
+      label: 'Sign out',
+      icon: 'pi pi-sign-out',
+      command: () => {
+        this.signOut();
+      },
+    },
+  ];
 
   ngOnInit() {
-    this.items = [
-      {
-        label: 'Profile',
-        icon: 'pi pi-user',
-      },
-      {
-        label: 'Settings',
-        icon: 'pi pi-cog',
-      },
-      {
-        label: 'Sign out',
-        icon: 'pi pi-sign-out',
-        command: () => {
-          this.signOut();
-        },
-      },
-    ];
+    this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   toggleSidebar() {
@@ -58,7 +57,8 @@ export class NavbarComponent {
   signOut() {
     this.authService.signOut().subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        this.router.navigate(['/auth']);
+        this.isLoggedIn = false;
       },
       error: (error) => {
         console.error(error);

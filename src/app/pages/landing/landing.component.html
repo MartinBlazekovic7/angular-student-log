@@ -21,6 +21,7 @@
         class="mr-3 p-button-raised"
         (click)="scrollToLearnMore()"
       ></button>
+      @if (!isLoggedIn) {
       <a
         [routerLink]="['/auth']"
         pButton
@@ -29,6 +30,16 @@
         type="button"
         class="no-underline p-button-outlined"
       ></a>
+      } @else {
+      <a
+        [routerLink]="['/dashboard']"
+        pButton
+        pRipple
+        label="Dashboard"
+        type="button"
+        class="no-underline p-button-outlined"
+      ></a>
+      }
     </section>
   </div>
   <div class="col-12 md:col-6 overflow-hidden">

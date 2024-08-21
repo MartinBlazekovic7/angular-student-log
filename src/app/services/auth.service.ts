@@ -25,4 +25,8 @@ export class AuthService {
   signOut(): Observable<any> {
     return from(this.auth.signOut());
   }
+
+  isLoggedIn(): boolean {
+    return !!this.auth.currentUser;
+  }
 }
