@@ -55,12 +55,15 @@ export class NavbarComponent {
   }
 
   signOut() {
+    this.sharedService.show();
     this.authService.signOut().subscribe({
       next: () => {
+        this.sharedService.hide();
         this.router.navigate(['/auth']);
         this.isLoggedIn = false;
       },
       error: (error) => {
+        this.sharedService.hide();
         console.error(error);
       },
     });

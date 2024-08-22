@@ -16,6 +16,9 @@ import { DataService } from '../../../../services/data.service';
 import { Collections } from '../../../../enums/collections.enum';
 import { passwordsMatchValidator } from '../../../../utils/validators';
 import { SharedService } from '../../../../services/shared.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { FirebaseErrorHelper } from '../../../../helpers/firebase-error.helper';
 
 @Component({
   selector: 'app-registration',
@@ -26,9 +29,11 @@ import { SharedService } from '../../../../services/shared.service';
     RippleModule,
     InputTextModule,
     ButtonModule,
+    ToastModule,
   ],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss',
+  providers: [MessageService],
 })
 export class RegistrationComponent {
   @Output() goToLogin: EventEmitter<any> = new EventEmitter();
@@ -38,6 +43,7 @@ export class RegistrationComponent {
   router = inject(Router);
   dataService = inject(DataService);
   sharedService = inject(SharedService);
+  messageService = inject(MessageService);
 
   registerForm = this.fb.group(
     {
@@ -90,6 +96,11 @@ export class RegistrationComponent {
         },
         error: (error) => {
           this.sharedService.hide();
+          this.messageService.add({
+            severity: 'danger',
+            summary: 'Error',
+            detail: FirebaseErrorHelper.getErrorMessage(error.message),
+          });
           console.error(error);
         },
       });

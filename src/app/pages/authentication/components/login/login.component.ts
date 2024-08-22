@@ -11,6 +11,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
 import { SharedService } from '../../../../services/shared.service';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { FirebaseErrorHelper } from '../../../../helpers/firebase-error.helper';
 
 @Component({
   selector: 'app-login',
@@ -22,9 +25,11 @@ import { SharedService } from '../../../../services/shared.service';
     RippleModule,
     InputTextModule,
     RouterModule,
+    ToastModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
+  providers: [MessageService],
 })
 export class LoginComponent {
   @Output() goToRegistration: EventEmitter<any> = new EventEmitter();
@@ -33,6 +38,7 @@ export class LoginComponent {
   fb = inject(UntypedFormBuilder);
   router = inject(Router);
   sharedService = inject(SharedService);
+  messageService = inject(MessageService);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -52,6 +58,11 @@ export class LoginComponent {
       },
       error: (error) => {
         this.sharedService.hide();
+        this.messageService.add({
+          severity: 'danger',
+          summary: 'Error',
+          detail: FirebaseErrorHelper.getErrorMessage(error.message),
+        });
         console.error(error);
       },
     });
@@ -74,6 +85,11 @@ export class LoginComponent {
       },
       error: (error) => {
         this.sharedService.hide();
+        this.messageService.add({
+          severity: 'danger',
+          summary: 'Error',
+          detail: FirebaseErrorHelper.getErrorMessage(error.message),
+        });
         console.error(error);
       },
     });
