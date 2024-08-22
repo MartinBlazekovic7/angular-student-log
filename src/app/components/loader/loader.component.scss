@@ -1,0 +1,47 @@
+.loader-content {
+  font-family: "Quicksand Light", sans-serif;
+  backdrop-filter: blur(2px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  opacity: 0;
+  visibility: hidden;
+  transition: 300ms;
+  &.isActive {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+.default-loader {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: inline-block;
+  border-top: 3px solid #fd515a;
+  border-right: 3px solid #fd515a;
+  border-bottom: 3px solid transparent;
+  box-sizing: border-box;
+}
+.input-loader:not(:empty) + .default-loader {
+  display: none;
+}
+.default-loader,
+.input-loader {
+  animation: rotation 1s linear infinite;
+}
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

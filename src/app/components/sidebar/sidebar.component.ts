@@ -4,7 +4,7 @@ import { Sidebar, SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
-import { SidebarService } from '../../services/sidebar.service';
+import { SharedService } from '../../services/shared.service';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -26,16 +26,16 @@ export class SidebarComponent implements OnInit {
 
   sidebarVisible: boolean = false;
 
-  constructor(private sidebarService: SidebarService) {}
+  constructor(private sharedService: SharedService) {}
 
   ngOnInit(): void {
-    this.sidebarService.currentSidebarState.subscribe((state) => {
+    this.sharedService.currentSidebarState.subscribe((state) => {
       this.sidebarVisible = state;
     });
   }
 
   closeSidebar(): void {
-    this.sidebarService.changeSidebarState(false);
+    this.sharedService.changeSidebarState(false);
   }
 
   closeCallback(e: any): void {

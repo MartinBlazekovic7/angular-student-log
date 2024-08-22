@@ -15,6 +15,7 @@ import { RegisterForm } from '../../../../interfaces/forms.interface';
 import { DataService } from '../../../../services/data.service';
 import { Collections } from '../../../../enums/collections.enum';
 import { passwordsMatchValidator } from '../../../../utils/validators';
+import { SharedService } from '../../../../services/shared.service';
 
 @Component({
   selector: 'app-registration',
@@ -36,6 +37,7 @@ export class RegistrationComponent {
   fb = inject(UntypedFormBuilder);
   router = inject(Router);
   dataService = inject(DataService);
+  sharedService = inject(SharedService);
 
   registerForm = this.fb.group(
     {
@@ -53,6 +55,7 @@ export class RegistrationComponent {
   }
 
   registerWithEmail() {
+    this.sharedService.show();
     const registerFormModel: RegisterForm = this.registerForm.value;
     const { email, firstName, lastName } = registerFormModel;
 
@@ -63,6 +66,7 @@ export class RegistrationComponent {
       !registerFormModel.firstName ||
       !registerFormModel.lastName
     ) {
+      this.sharedService.hide();
       this.registerForm.markAllAsTouched();
       return;
     }
@@ -81,9 +85,11 @@ export class RegistrationComponent {
       )
       .subscribe({
         next: () => {
+          this.sharedService.hide();
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
+          this.sharedService.hide();
           console.error(error);
         },
       });

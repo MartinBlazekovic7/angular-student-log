@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
-import { SidebarService } from '../../services/sidebar.service';
+import { SharedService } from '../../services/shared.service';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { AuthService } from '../../services/auth.service';
@@ -24,7 +24,7 @@ import { Router } from '@angular/router';
 export class NavbarComponent {
   isLoggedIn = true;
 
-  sidebarService = inject(SidebarService);
+  sharedService = inject(SharedService);
   authService = inject(AuthService);
   router = inject(Router);
 
@@ -51,7 +51,7 @@ export class NavbarComponent {
   }
 
   toggleSidebar() {
-    this.sidebarService.changeSidebarState(true);
+    this.sharedService.changeSidebarState(true);
   }
 
   signOut() {
