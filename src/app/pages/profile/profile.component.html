@@ -31,16 +31,29 @@
       ></p-avatar>
       }
 
-      <p-fileUpload
-        mode="basic"
-        name="profile"
-        auto="true"
-        customUpload="true"
-        chooseLabel="Upload"
-        accept="image/*"
-        (uploadHandler)="onUpload($event)"
-        class="mb-4"
-      ></p-fileUpload>
+      <div
+        class="w-100 flex flex-row justify-content-center align-items-center"
+      >
+        <p-fileUpload
+          class="mr-1"
+          mode="basic"
+          name="profile"
+          auto="true"
+          customUpload="true"
+          chooseLabel="Upload"
+          accept="image/*"
+          (uploadHandler)="onUpload($event)"
+        ></p-fileUpload>
+        <button
+          pButton
+          pRipple
+          label="Remove"
+          type="button"
+          class="p-button-outlined ml-1"
+          icon="pi pi-times"
+          (click)="removeImage()"
+        ></button>
+      </div>
     </div>
 
     <div class="mb-4">

@@ -21,6 +21,9 @@ import { UserProfile } from '../../interfaces/user.interface';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
+import { SharedService } from '../../services/shared.service';
+import { ImageUploadService } from '../../services/image-upload.service';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -48,6 +51,8 @@ export class ProfileComponent implements OnInit {
   dataService = inject(DataService);
   authService = inject(AuthService);
   fb = inject(UntypedFormBuilder);
+  sharedService = inject(SharedService);
+  imageUploadService = inject(ImageUploadService);
 
   userForm = this.fb.group({
     firstName: ['', Validators.required],
@@ -79,12 +84,44 @@ export class ProfileComponent implements OnInit {
   }
 
   onUpload(event: any) {
-    this.messageService.add({
-      severity: 'info',
-      summary: 'File Uploaded',
-      detail: '',
-    });
+    this.sharedService.showLoader();
+
+    const uid = this.user?.uid ?? '';
+
+    if (!uid) {
+      return;
+    }
+
+    this.imageUploadService
+      .uploadImage(event.files[0], `images/profile/${uid}`)
+      .pipe(
+        switchMap((photoURL: string) => {
+          this.user = { ...(this.user as UserProfile), photoURL: photoURL };
+          return this.dataService.updateUser(this.user as UserProfile);
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.sharedService.hideLoader();
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Success',
+            detail: 'Successfully uploaded profile image.',
+          });
+        },
+        error: (error) => {
+          this.sharedService.hideLoader();
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'There was an error in uploading the profile image.',
+          });
+          console.error(error);
+        },
+      });
   }
+
+  removeImage() {}
 
   openEditDialog() {
     this.dialogVisible = true;
@@ -97,7 +134,6 @@ export class ProfileComponent implements OnInit {
       companyName: this.user?.details.companyName ?? '',
       hourlyRate: this.user?.details.hourlyRate ?? '',
     });
-    console.log(this.userForm);
   }
 
   closeEditDialog() {
@@ -115,6 +151,8 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
+    this.sharedService.showLoader();
+
     const updatedUser: UserProfile = {
       uid: this.user?.uid ?? '',
       firstName: this.firstName.value ?? '',
@@ -129,13 +167,27 @@ export class ProfileComponent implements OnInit {
       },
     };
 
-    this.dataService.updateUser(updatedUser).subscribe((response) => {
-      console.log(response);
-      this.user = updatedUser;
+    this.dataService.updateUser(updatedUser).subscribe({
+      next: () => {
+        this.sharedService.hideLoader();
+        this.userForm.reset();
+        this.dialogVisible = false;
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Success',
+          detail: 'User updated successfully.',
+        });
+      },
+      error: (error) => {
+        this.sharedService.hideLoader();
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'There was an error in updating the user.',
+        });
+        console.error(error);
+      },
     });
-
-    this.userForm.reset();
-    this.dialogVisible = false;
   }
 
   get firstName() {

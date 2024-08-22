@@ -2,3 +2,8 @@ body {
   margin: 0;
   padding: 0;
 }
+
+body > app-root > app-profile > div > div > div:nth-child(2) > p-avatar > div {
+  width: 200px !important;
+  height: 200px !important;
+}
