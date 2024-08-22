@@ -2,10 +2,13 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import {
   Auth,
+  createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
+  UserCredential,
 } from '@angular/fire/auth';
+import { RegisterForm } from '../interfaces/forms.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -28,5 +31,17 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.auth.currentUser;
+  }
+
+  registerWithEmail(
+    registerFormModel: RegisterForm
+  ): Observable<UserCredential> {
+    return from(
+      createUserWithEmailAndPassword(
+        this.auth,
+        registerFormModel.email,
+        registerFormModel.password
+      )
+    );
   }
 }
