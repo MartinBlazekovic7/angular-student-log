@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
@@ -24,6 +24,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SharedService } from '../../services/shared.service';
 import { ImageUploadService } from '../../services/image-upload.service';
 import { switchMap } from 'rxjs';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-profile',
@@ -41,10 +42,11 @@ import { switchMap } from 'rxjs';
     DialogModule,
     InputTextModule,
     TooltipModule,
+    ConfirmDialogModule,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
 })
 export class ProfileComponent implements OnInit {
   messageService = inject(MessageService);
@@ -53,6 +55,7 @@ export class ProfileComponent implements OnInit {
   fb = inject(UntypedFormBuilder);
   sharedService = inject(SharedService);
   imageUploadService = inject(ImageUploadService);
+  confirmationService = inject(ConfirmationService);
 
   userForm = this.fb.group({
     firstName: ['', Validators.required],
@@ -78,7 +81,6 @@ export class ProfileComponent implements OnInit {
           if (!userData) return;
 
           this.user = userData as UserProfile;
-          console.log(this.user);
         });
     });
   }
@@ -104,7 +106,7 @@ export class ProfileComponent implements OnInit {
         next: () => {
           this.sharedService.hideLoader();
           this.messageService.add({
-            severity: 'info',
+            severity: 'success',
             summary: 'Success',
             detail: 'Successfully uploaded profile image.',
           });
@@ -121,7 +123,56 @@ export class ProfileComponent implements OnInit {
       });
   }
 
-  removeImage() {}
+  confirmDialog(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Do you want to remove this image?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: 'p-button-danger p-button-text',
+      rejectButtonStyleClass: 'p-button-text p-button-text',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+
+      accept: () => {
+        this.removeImage();
+      },
+      reject: () => {},
+    });
+  }
+
+  removeImage() {
+    this.sharedService.showLoader();
+    this.dataService
+      .removeImage(this.user?.uid ?? '')
+      .pipe(
+        switchMap(() => {
+          return this.imageUploadService.deleteImage(
+            `images/profile/${this.user?.uid}`
+          );
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.sharedService.hideLoader();
+          this.user = { ...(this.user as UserProfile), photoURL: '' };
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Profile image removed.',
+          });
+        },
+        error: (error) => {
+          this.sharedService.hideLoader();
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'There was an error in removing the profile image.',
+          });
+          console.error(error);
+        },
+      });
+  }
 
   openEditDialog() {
     this.dialogVisible = true;
@@ -173,7 +224,7 @@ export class ProfileComponent implements OnInit {
         this.userForm.reset();
         this.dialogVisible = false;
         this.messageService.add({
-          severity: 'info',
+          severity: 'success',
           summary: 'Success',
           detail: 'User updated successfully.',
         });

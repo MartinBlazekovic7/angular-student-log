@@ -30,4 +30,9 @@ export class DataService {
     const ref = doc(this.firestore, Collections.USERS, user.uid ?? '');
     return from(updateDoc(ref, { ...user }));
   }
+
+  removeImage(uid: string): Observable<void> {
+    const ref = doc(this.firestore, Collections.USERS, uid);
+    return from(updateDoc(ref, { photoURL: '' }));
+  }
 }

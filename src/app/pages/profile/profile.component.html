@@ -44,6 +44,7 @@
           accept="image/*"
           (uploadHandler)="onUpload($event)"
         ></p-fileUpload>
+        @if(user.photoURL) {
         <button
           pButton
           pRipple
@@ -51,8 +52,9 @@
           type="button"
           class="p-button-outlined ml-1"
           icon="pi pi-times"
-          (click)="removeImage()"
+          (click)="confirmDialog($event)"
         ></button>
+        }
       </div>
     </div>
 
@@ -211,3 +213,5 @@
     </div>
   </form>
 </p-dialog>
+
+<p-confirmDialog />
