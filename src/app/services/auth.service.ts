@@ -1,11 +1,13 @@
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { inject, Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { BehaviorSubject, Observable, from } from 'rxjs';
 import {
   Auth,
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
+  User,
   UserCredential,
 } from '@angular/fire/auth';
 import { RegisterForm } from '../interfaces/forms.interface';
@@ -15,6 +17,26 @@ import { RegisterForm } from '../interfaces/forms.interface';
 })
 export class AuthService {
   auth = inject(Auth);
+  fireAuth = inject(AngularFireAuth);
+
+  private authStatusSubject = new BehaviorSubject<User | null>(null);
+  authStatus$: Observable<User | null> = this.authStatusSubject.asObservable();
+
+  constructor() {
+    this.authStatusListener();
+  }
+
+  authStatusListener() {
+    this.fireAuth.onAuthStateChanged((user) => {
+      this.authStatusSubject.next((user as User) || null);
+      if (user) {
+        console.log(user);
+        console.log('User is logged in');
+      } else {
+        console.log('User is logged out');
+      }
+    });
+  }
 
   signInWithGoogle(): Observable<any> {
     const provider = new GoogleAuthProvider();

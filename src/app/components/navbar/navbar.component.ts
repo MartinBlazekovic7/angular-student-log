@@ -47,7 +47,9 @@ export class NavbarComponent {
   ];
 
   ngOnInit() {
-    this.isLoggedIn = this.authService.isLoggedIn();
+    this.authService.authStatus$.subscribe((user) => {
+      this.isLoggedIn = !!user;
+    });
   }
 
   toggleSidebar() {

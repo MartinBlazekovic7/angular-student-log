@@ -25,7 +25,9 @@ export class LandingComponent implements OnInit {
   isLoggedIn = false;
 
   ngOnInit() {
-    this.isLoggedIn = this.authService.isLoggedIn();
+    this.authService.authStatus$.subscribe((user) => {
+      this.isLoggedIn = !!user;
+    });
   }
 
   scrollToLearnMore() {
