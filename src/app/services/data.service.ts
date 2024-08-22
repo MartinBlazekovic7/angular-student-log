@@ -1,6 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { doc, docData, Firestore, setDoc } from '@angular/fire/firestore';
+import {
+  doc,
+  docData,
+  Firestore,
+  setDoc,
+  updateDoc,
+} from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
+import { UserProfile } from '../interfaces/user.interface';
+import { Collections } from '../enums/collections.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -16,5 +24,10 @@ export class DataService {
   getData(collection: string, uid: string) {
     const ref = doc(this.firestore, collection, uid);
     return docData(ref);
+  }
+
+  updateUser(user: UserProfile): Observable<void> {
+    const ref = doc(this.firestore, Collections.USERS, user.uid ?? '');
+    return from(updateDoc(ref, { ...user }));
   }
 }

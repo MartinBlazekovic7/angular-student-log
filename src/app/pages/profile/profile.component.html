@@ -101,3 +101,100 @@
 </div>
 
 <p-toast></p-toast>
+
+<p-dialog
+  header="Header"
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap">
+        Update your information.
+      </span>
+    </div>
+  </ng-template>
+  <form [formGroup]="userForm" (ngSubmit)="updateUser()" autocomplete="on">
+    <div class="flex align-items-center gap-3 mb-3 pt-1">
+      <label for="email" class="font-semibold w-6rem">Email</label>
+      <input
+        pInputText
+        id="email"
+        class="flex-auto"
+        formControlName="email"
+        pTooltip="You can't change your email address here."
+        placeholder="autoHide: true"
+        readonly
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="firstName" class="font-semibold w-6rem">First name</label>
+      <input
+        pInputText
+        id="firstName"
+        class="flex-auto"
+        formControlName="firstName"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="lastName" class="font-semibold w-6rem">Last name</label>
+      <input
+        pInputText
+        id="lastName"
+        class="flex-auto"
+        formControlName="lastName"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="university" class="font-semibold w-6rem">University</label>
+      <input
+        pInputText
+        id="university"
+        class="flex-auto"
+        formControlName="university"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="degree" class="font-semibold w-6rem">Degree</label>
+      <input
+        pInputText
+        id="degree"
+        class="flex-auto"
+        formControlName="degree"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="companyName" class="font-semibold w-6rem">Company name</label>
+      <input
+        pInputText
+        id="companyName"
+        class="flex-auto"
+        formControlName="companyName"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="hourlyRate" class="font-semibold w-6rem">Hourly rate</label>
+      <input
+        pInputText
+        id="hourlyRate"
+        class="flex-auto"
+        formControlName="hourlyRate"
+      />
+    </div>
+    <div class="flex flex-row justify-content-end align-items-center w-100">
+      <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (onClick)="closeEditDialog()"
+      />
+      <p-button
+        label="Save"
+        [outlined]="true"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+</p-dialog>
