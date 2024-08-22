@@ -29,12 +29,12 @@ export class AuthService {
   authStatusListener() {
     this.fireAuth.onAuthStateChanged((user) => {
       this.authStatusSubject.next((user as User) || null);
-      if (user) {
+      /* if (user) {
         console.log(user);
         console.log('User is logged in');
       } else {
         console.log('User is logged out');
-      }
+      } */
     });
   }
 

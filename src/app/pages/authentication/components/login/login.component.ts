@@ -58,12 +58,21 @@ export class LoginComponent {
     this.authService
       .signInWithGoogle()
       .pipe(
-        switchMap(({ user: { uid, displayName, email } }) =>
+        switchMap(({ user: { uid, displayName, email, photoURL } }) =>
           this.dataService.addData(Collections.USERS, {
             uid,
             firstName: displayName.split(' ')[0],
             lastName: displayName.split(' ')[1],
             email,
+            photoURL,
+            details: {
+              dateOfBirth: '',
+              address: '',
+              university: '',
+              degree: '',
+              companyName: '',
+              phoneNumber: '',
+            },
           })
         )
       )

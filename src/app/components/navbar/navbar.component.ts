@@ -32,10 +32,16 @@ export class NavbarComponent {
     {
       label: 'Profile',
       icon: 'pi pi-user',
+      command: () => {
+        this.redirectTo('profile');
+      },
     },
     {
       label: 'Settings',
       icon: 'pi pi-cog',
+      command: () => {
+        this.redirectTo('settings');
+      },
     },
     {
       label: 'Sign out',
@@ -54,6 +60,10 @@ export class NavbarComponent {
 
   toggleSidebar() {
     this.sharedService.changeSidebarState(true);
+  }
+
+  redirectTo(route: string) {
+    this.router.navigate([route]);
   }
 
   signOut() {

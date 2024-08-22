@@ -80,12 +80,21 @@ export class RegistrationComponent {
     this.authService
       .registerWithEmail(registerFormModel)
       .pipe(
-        switchMap(({ user: { uid } }) =>
+        switchMap(({ user: { uid, photoURL } }) =>
           this.dataService.addData(Collections.USERS, {
             uid,
             email,
             firstName,
             lastName,
+            photoURL,
+            details: {
+              dateOfBirth: '',
+              address: '',
+              university: '',
+              degree: '',
+              companyName: '',
+              phoneNumber: '',
+            },
           })
         )
       )

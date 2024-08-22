@@ -1,0 +1,103 @@
+<div
+  class="surface-ground px-4 py-5 md:px-6 lg:px-8 w-screen min-h-screen flex justify-content-center align-items-center"
+>
+  @if(user) {
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="flex justify-content-end mb-4">
+      <button
+        pButton
+        pRipple
+        label="Back"
+        icon="pi pi-arrow-left"
+        class="p-button-text"
+        [routerLink]="['/']"
+      ></button>
+    </div>
+
+    <div class="text-center">
+      @if(user.photoURL) {
+      <p-avatar
+        image="{{ user.photoURL }}"
+        shape="circle"
+        size="xlarge"
+        styleClass="mb-3"
+      ></p-avatar>
+      } @else {
+      <p-avatar
+        label="{{ user.firstName.charAt(0) }}"
+        shape="circle"
+        size="xlarge"
+        styleClass="mb-3"
+      ></p-avatar>
+      }
+
+      <p-fileUpload
+        mode="basic"
+        name="profile"
+        auto="true"
+        customUpload="true"
+        chooseLabel="Upload"
+        accept="image/*"
+        (uploadHandler)="onUpload($event)"
+        class="mb-4"
+      ></p-fileUpload>
+    </div>
+
+    <div class="mb-4">
+      <h2 class="text-center text-2xl font-bold mb-3">
+        {{ user.firstName }} {{ user.lastName }}
+      </h2>
+
+      <p-divider></p-divider>
+
+      <div class="flex flex-column">
+        @if(user.email) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">Email:</span>
+          <span class="text-lg text-600">{{ user.email }}</span>
+        </div>
+        <p-divider></p-divider>
+        } @if(user.details.university) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">University:</span>
+          <span class="text-lg text-600">{{ user.details.university }}</span>
+        </div>
+        <p-divider></p-divider>
+        } @if(user.details.degree) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">Degree:</span>
+          <span class="text-lg text-600">{{ user.details.degree }}</span>
+        </div>
+        <p-divider></p-divider>
+        } @if(user.details.companyName) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">Company name:</span>
+          <span class="text-lg text-600">{{ user.details.companyName }}</span>
+        </div>
+        <p-divider></p-divider>
+        } @if(user.details.hourlyRate) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">Hourly rate:</span>
+          <span class="text-lg text-600"
+            >{{ user.details.hourlyRate }}&#8364;</span
+          >
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="text-center">
+      <button
+        pButton
+        pRipple
+        label="Edit"
+        icon="pi pi-pencil"
+        class="p-button"
+        (click)="openEditDialog()"
+      ></button>
+    </div>
+  </div>
+  }
+</div>
+
+<p-toast></p-toast>
