@@ -14,6 +14,9 @@ import { SharedService } from '../../../../services/shared.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { FirebaseErrorHelper } from '../../../../helpers/firebase-error.helper';
+import { switchMap } from 'rxjs';
+import { Collections } from '../../../../enums/collections.enum';
+import { DataService } from '../../../../services/data.service';
 
 @Component({
   selector: 'app-login',
@@ -39,6 +42,7 @@ export class LoginComponent {
   router = inject(Router);
   sharedService = inject(SharedService);
   messageService = inject(MessageService);
+  dataService = inject(DataService);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -51,21 +55,34 @@ export class LoginComponent {
 
   signInWIthGoogle() {
     this.sharedService.showLoader();
-    this.authService.signInWithGoogle().subscribe({
-      next: () => {
-        this.sharedService.hideLoader();
-        this.router.navigate(['/dashboard']);
-      },
-      error: (error) => {
-        this.sharedService.hideLoader();
-        this.messageService.add({
-          severity: 'danger',
-          summary: 'Error',
-          detail: FirebaseErrorHelper.getErrorMessage(error.message),
-        });
-        console.error(error);
-      },
-    });
+    this.authService
+      .signInWithGoogle()
+      .pipe(
+        switchMap(({ user: { uid, displayName, email } }) =>
+          this.dataService.addData(Collections.USERS, {
+            uid,
+            firstName: displayName.split(' ')[0],
+            lastName: displayName.split(' ')[1],
+            email,
+          })
+        )
+      )
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+          this.sharedService.hideLoader();
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          this.sharedService.hideLoader();
+          this.messageService.add({
+            severity: 'danger',
+            summary: 'Error',
+            detail: FirebaseErrorHelper.getErrorMessage(error.message),
+          });
+          console.error(error);
+        },
+      });
   }
 
   signInWithEmailAndPassword() {
