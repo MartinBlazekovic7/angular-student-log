@@ -50,14 +50,14 @@ export class LoginComponent {
   }
 
   signInWIthGoogle() {
-    this.sharedService.show();
+    this.sharedService.showLoader();
     this.authService.signInWithGoogle().subscribe({
       next: () => {
-        this.sharedService.hide();
+        this.sharedService.hideLoader();
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {
-        this.sharedService.hide();
+        this.sharedService.hideLoader();
         this.messageService.add({
           severity: 'danger',
           summary: 'Error',
@@ -69,22 +69,22 @@ export class LoginComponent {
   }
 
   signInWithEmailAndPassword() {
-    this.sharedService.show();
+    this.sharedService.showLoader();
     const { email, password } = this.loginForm.value;
 
     if (!this.loginForm.valid || !email || !password) {
-      this.sharedService.hide();
+      this.sharedService.hideLoader();
       this.loginForm.markAllAsTouched();
       return;
     }
 
     this.authService.signInWithEmailAndPassword(email, password).subscribe({
       next: () => {
-        this.sharedService.hide();
+        this.sharedService.hideLoader();
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {
-        this.sharedService.hide();
+        this.sharedService.hideLoader();
         this.messageService.add({
           severity: 'danger',
           summary: 'Error',

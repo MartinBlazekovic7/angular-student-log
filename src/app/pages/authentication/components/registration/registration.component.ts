@@ -61,7 +61,7 @@ export class RegistrationComponent {
   }
 
   registerWithEmail() {
-    this.sharedService.show();
+    this.sharedService.showLoader();
     const registerFormModel: RegisterForm = this.registerForm.value;
     const { email, firstName, lastName } = registerFormModel;
 
@@ -72,7 +72,7 @@ export class RegistrationComponent {
       !registerFormModel.firstName ||
       !registerFormModel.lastName
     ) {
-      this.sharedService.hide();
+      this.sharedService.hideLoader();
       this.registerForm.markAllAsTouched();
       return;
     }
@@ -91,11 +91,11 @@ export class RegistrationComponent {
       )
       .subscribe({
         next: () => {
-          this.sharedService.hide();
+          this.sharedService.hideLoader();
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
-          this.sharedService.hide();
+          this.sharedService.hideLoader();
           this.messageService.add({
             severity: 'danger',
             summary: 'Error',

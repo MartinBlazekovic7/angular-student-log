@@ -15,11 +15,11 @@ export class SharedService {
   activeSubject = new BehaviorSubject({ active: false });
   active$ = this.activeSubject.asObservable();
 
-  show() {
+  showLoader() {
     this.activeSubject.next({ active: true });
   }
 
-  hide() {
+  hideLoader() {
     this.activeSubject.next({ active: false });
   }
 }
