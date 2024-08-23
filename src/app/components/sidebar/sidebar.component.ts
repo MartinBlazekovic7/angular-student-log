@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Sidebar, SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { SharedService } from '../../services/shared.service';
 import { RouterModule } from '@angular/router';
+import { UserProfile } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-sidebar',
@@ -23,6 +24,7 @@ import { RouterModule } from '@angular/router';
 })
 export class SidebarComponent implements OnInit {
   @ViewChild('sidebarRef') sidebarRef!: Sidebar;
+  @Input() user?: UserProfile | null = null;
 
   sidebarVisible: boolean = false;
 

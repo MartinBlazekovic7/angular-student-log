@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
 import { SharedService } from '../../services/shared.service';
@@ -7,6 +7,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { UserProfile } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-navbar',
@@ -22,6 +23,8 @@ import { Router } from '@angular/router';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
+  @Input() user?: UserProfile | null = null;
+
   isLoggedIn = true;
 
   sharedService = inject(SharedService);
