@@ -6,8 +6,10 @@ import { SharedService } from '../../services/shared.service';
 import { AvatarModule } from 'primeng/avatar';
 import { MenuModule } from 'primeng/menu';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UserProfile } from '../../interfaces/user.interface';
+import { filter, map } from 'rxjs';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-navbar',
@@ -30,6 +32,10 @@ export class NavbarComponent {
   sharedService = inject(SharedService);
   authService = inject(AuthService);
   router = inject(Router);
+  activatedRoute = inject(ActivatedRoute);
+  titleService = inject(Title);
+
+  pageTitle = '';
 
   items = [
     {
@@ -59,6 +65,25 @@ export class NavbarComponent {
     this.authService.authStatus$.subscribe((user) => {
       this.isLoggedIn = !!user;
     });
+
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map(() => {
+          let route = this.activatedRoute;
+          while (route.firstChild) {
+            route = route.firstChild;
+          }
+          return route;
+        }),
+        map((route) => route.snapshot.data['title'])
+      )
+      .subscribe((pageTitle: string) => {
+        if (pageTitle) {
+          this.pageTitle = pageTitle;
+          this.titleService.setTitle(`StudentLog - ${pageTitle}`);
+        }
+      });
   }
 
   toggleSidebar() {
