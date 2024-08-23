@@ -35,4 +35,9 @@ export class DataService {
     const ref = doc(this.firestore, Collections.USERS, uid);
     return from(updateDoc(ref, { photoURL: '' }));
   }
+
+  getDocument(collection: string, id: string): Observable<any> {
+    const ref = doc(this.firestore, collection, id);
+    return docData(ref);
+  }
 }

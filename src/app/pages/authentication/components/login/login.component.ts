@@ -14,7 +14,7 @@ import { SharedService } from '../../../../services/shared.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { FirebaseErrorHelper } from '../../../../helpers/firebase-error.helper';
-import { switchMap } from 'rxjs';
+import { of, switchMap } from 'rxjs';
 import { Collections } from '../../../../enums/collections.enum';
 import { DataService } from '../../../../services/data.service';
 
@@ -59,21 +59,31 @@ export class LoginComponent {
       .signInWithGoogle()
       .pipe(
         switchMap(({ user: { uid, displayName, email, photoURL } }) =>
-          this.dataService.addData(Collections.USERS, {
-            uid,
-            firstName: displayName.split(' ')[0],
-            lastName: displayName.split(' ')[1],
-            email,
-            photoURL,
-            details: {
-              dateOfBirth: '',
-              address: '',
-              university: '',
-              degree: '',
-              companyName: '',
-              phoneNumber: '',
-            },
-          })
+          this.dataService.getDocument(Collections.USERS, uid).pipe(
+            switchMap((existingUser) => {
+              if (existingUser) {
+                // User already exists, no need to add data
+                return of(existingUser); // Return the existing user data as an observable
+              } else {
+                // User doesn't exist, add new data
+                return this.dataService.addData(Collections.USERS, {
+                  uid,
+                  firstName: displayName.split(' ')[0],
+                  lastName: displayName.split(' ')[1],
+                  email,
+                  photoURL,
+                  details: {
+                    dateOfBirth: '',
+                    address: '',
+                    university: '',
+                    degree: '',
+                    companyName: '',
+                    phoneNumber: '',
+                  },
+                });
+              }
+            })
+          )
         )
       )
       .subscribe({
