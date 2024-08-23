@@ -1,1 +1,56 @@
-<p>settings works!</p>
+<div
+  class="surface-ground px-4 py-5 md:px-6 lg:px-8 w-screen min-h-screen flex justify-content-center align-items-center"
+>
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="flex justify-content-end mb-4">
+      <button
+        pButton
+        pRipple
+        label="Back"
+        icon="pi pi-arrow-left"
+        class="p-button-text"
+        [routerLink]="['/']"
+      ></button>
+    </div>
+    <div class="mb-4">
+      <h2 class="text-center text-2xl font-bold mb-3">Settings</h2>
+
+      <p-divider></p-divider>
+
+      <div class="flex align-items-center justify-content-between py-2">
+        <span class="font-medium text-lg">Dark Mode</span>
+        <p-inputSwitch [(ngModel)]="settings.darkMode"></p-inputSwitch>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="flex align-items-center justify-content-between py-2">
+        <span class="font-medium text-lg mb-2">Language</span>
+        <p-dropdown
+          [options]="languages"
+          [(ngModel)]="settings.language"
+          (onChange)="changeLanguage($event)"
+          placeholder="Select Language"
+        >
+        </p-dropdown>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="text-center">
+        <button
+          pButton
+          pRipple
+          label="Save Settings"
+          icon="pi pi-save"
+          class="p-button-rounded"
+          (click)="confirmDialog($event)"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast />
+
+<p-confirmDialog />

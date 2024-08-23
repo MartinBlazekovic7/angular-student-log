@@ -25,6 +25,7 @@ import { SharedService } from '../../services/shared.service';
 import { ImageUploadService } from '../../services/image-upload.service';
 import { switchMap } from 'rxjs';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { RippleModule } from 'primeng/ripple';
 
 @Component({
   selector: 'app-profile',
@@ -43,6 +44,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
     InputTextModule,
     TooltipModule,
     ConfirmDialogModule,
+    RippleModule,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -215,6 +217,10 @@ export class ProfileComponent implements OnInit {
         degree: this.degree.value,
         companyName: this.companyName.value,
         hourlyRate: this.hourlyRate.value,
+      },
+      settings: this.user?.settings ?? {
+        darkMode: false,
+        language: 'en',
       },
     };
 

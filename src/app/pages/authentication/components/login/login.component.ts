@@ -62,10 +62,8 @@ export class LoginComponent {
           this.dataService.getDocument(Collections.USERS, uid).pipe(
             switchMap((existingUser) => {
               if (existingUser) {
-                // User already exists, no need to add data
-                return of(existingUser); // Return the existing user data as an observable
+                return of(existingUser);
               } else {
-                // User doesn't exist, add new data
                 return this.dataService.addData(Collections.USERS, {
                   uid,
                   firstName: displayName.split(' ')[0],
@@ -79,6 +77,10 @@ export class LoginComponent {
                     degree: '',
                     companyName: '',
                     phoneNumber: '',
+                  },
+                  settings: {
+                    darkMode: false,
+                    language: 'en',
                   },
                 });
               }

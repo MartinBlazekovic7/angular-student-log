@@ -95,6 +95,10 @@ export class RegistrationComponent {
               companyName: '',
               phoneNumber: '',
             },
+            settings: {
+              darkMode: false,
+              language: 'en',
+            },
           })
         )
       )

@@ -5,6 +5,7 @@ export interface UserProfile {
   email: string;
   photoURL: string;
   details: UserDetails;
+  settings: UserSettings;
 }
 
 export interface UserDetails {
@@ -12,4 +13,9 @@ export interface UserDetails {
   degree: string;
   companyName: string;
   hourlyRate: number;
+}
+
+export interface UserSettings {
+  darkMode: boolean;
+  language: string;
 }
