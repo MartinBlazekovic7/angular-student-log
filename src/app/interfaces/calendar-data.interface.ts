@@ -1,18 +1,24 @@
-export interface CalendarData {
-  month: number;
-  year: number;
-  days: CalendarDay[];
+import { CalendarEvent, CalendarMonthViewDay } from 'angular-calendar';
+
+export interface CalendarDayCustom extends CalendarMonthViewDay {
+  events: CalendarEventCustom[];
+  dateString: string;
 }
 
-export interface CalendarDay {
-  date: string;
-  day: number;
-  hours: number;
-  isWeekend: boolean;
-  isHoliday: boolean;
-  isToday: boolean;
-  isCurrentMonth: boolean;
-  isCurrentYear: boolean;
-  description: string;
+export interface CalendarEventCustom extends CalendarEvent {
   money: number;
+  startTime: string;
+  endTime: string;
+  workHours: number;
+  date: Date;
+  dateString: string;
+  overtimeHours: number;
+  normalHours: number;
+  overtimeMoney: number;
+}
+
+export interface DataFormModel {
+  title: string;
+  startTime: string;
+  endTime: string;
 }

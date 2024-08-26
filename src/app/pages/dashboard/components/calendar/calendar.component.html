@@ -1,19 +1,107 @@
 <ng-template #customCellTemplate let-day="day" let-locale="locale">
-  <div class="cal-cell-top">
-    <span class="cal-day-badge" *ngIf="day.badgeTotal > 0">{{
-      day.badgeTotal
-    }}</span>
-    <span class="cal-day-number">{{ day.date.toString().slice(8, 10) }}</span>
+  <div class="cal-cell-top flex flex-column">
+    <div>
+      <span class="cal-day-badge" *ngIf="day.events.length > 0"
+        >{{ day.events[0].startTime }} - {{ day.events[0].endTime }}</span
+      >
+      <span class="cal-day-number">{{ day.date.toString().slice(8, 10) }}</span>
+    </div>
+    <div
+      class="flex flex-row justify-content-start align-items-center work-money"
+      *ngIf="day.events.length > 0"
+    >
+      <div>
+        <h2>{{ day.events[0].money }}&#8364;</h2>
+      </div>
+    </div>
   </div>
 </ng-template>
 
-<div [ngSwitch]="view">
-  <mwl-calendar-month-view
-    *ngSwitchCase="'month'"
-    [viewDate]="viewDate"
-    [events]="events"
-    [cellTemplate]="customCellTemplate"
-    (dayClicked)="dayClicked($event.day)"
-  >
-  </mwl-calendar-month-view>
+<div class="flex flex-column">
+  <div [ngSwitch]="view">
+    <mwl-calendar-month-view
+      *ngSwitchCase="'month'"
+      [viewDate]="viewDate"
+      [events]="events"
+      [cellTemplate]="customCellTemplate"
+      (dayClicked)="clickDay($event.day)"
+    >
+    </mwl-calendar-month-view>
+  </div>
+
+  <p-speedDial [model]="items" direction="left" />
 </div>
+
+@if (selectedDays.length > 0) {
+<div>
+  <div>
+    <h2 *ngIf="selectedDays.length === 1" class="px-5">
+      Selected day: {{ formatDate(selectedDays[0].date) }}
+    </h2>
+    <h2 *ngIf="selectedDays.length > 1" class="px-5">
+      Selected days: {{ getDateRange() }}
+    </h2>
+    <div class="flex justify-content-center align-items-center mb-3">
+      <form [formGroup]="dataForm" (ngSubmit)="saveData()" class="w-3 pb-3">
+        <div>
+          <label class="block text-900 font-medium mb-2" for="startTime"
+            >Start Time</label
+          >
+          <input
+            class="w-full mb-3"
+            pInputText
+            type="time"
+            formControlName="startTime"
+          />
+        </div>
+        <div>
+          <label class="block text-900 font-medium mb-2" for="endTime"
+            >End Time</label
+          >
+          <input
+            class="w-full mb-3"
+            pInputText
+            type="time"
+            id="endTime"
+            aria-describedby="endTime-help"
+            formControlName="endTime"
+          />
+        </div>
+        <div>
+          <label class="block text-900 font-medium mb-2" for="title"
+            >Description</label
+          >
+          <input
+            class="w-full mb-3"
+            pInputText
+            type="text"
+            formControlName="title"
+          />
+        </div>
+        <small id="endTime-help text-center pb-3">
+          Don't worry about night shifts and weekend work. We will calculate
+          everything for you.
+        </small>
+        <div class="text-center mt-3">
+          <button
+            pButton
+            pRipple
+            label="Cancel"
+            class="p-button-outlined w-5 mr-1"
+            (click)="cancelData()"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Save"
+            type="submit"
+            class="w-5 ml-1"
+          ></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+}
+
+<p-toast />

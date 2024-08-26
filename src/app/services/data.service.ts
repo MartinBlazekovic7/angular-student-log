@@ -9,6 +9,7 @@ import {
 import { from, Observable } from 'rxjs';
 import { UserProfile } from '../interfaces/user.interface';
 import { Collections } from '../enums/collections.enum';
+import { MonthDataResponse } from '../interfaces/month-data.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +40,10 @@ export class DataService {
   getDocument(collection: string, id: string): Observable<any> {
     const ref = doc(this.firestore, collection, id);
     return docData(ref);
+  }
+
+  updateUserMonthData(monthData: MonthDataResponse): Observable<void> {
+    const ref = doc(this.firestore, Collections.MONTH_DATA, monthData.uid);
+    return from(setDoc(ref, monthData));
   }
 }

@@ -1,100 +1,65 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
   ViewEncapsulation,
 } from '@angular/core';
 import {
-  CalendarEvent,
   CalendarMonthModule,
   CalendarMonthViewDay,
   CalendarView,
 } from 'angular-calendar';
-import { subDays, startOfDay, addDays, endOfMonth, addHours } from 'date-fns';
-import { EventColor } from 'calendar-utils';
-
-const colors: Record<string, EventColor> = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3',
-  },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF',
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA',
-  },
-};
+import { MenuItem, MessageService } from 'primeng/api';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { ToastModule } from 'primeng/toast';
+import {
+  CalendarDayCustom,
+  CalendarEventCustom,
+} from '../../../../interfaces/calendar-data.interface';
+import { ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { Statistics } from '../../../../interfaces/statistics.interface';
+import { DateTimeHelper } from '../../../../helpers/datetime.helper';
+import { SharedService } from '../../../../services/shared.service';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { CalendarDataHelper } from '../../../../helpers/calendar-data.helper';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, CalendarMonthModule],
+  imports: [
+    CommonModule,
+    CalendarMonthModule,
+    SpeedDialModule,
+    ToastModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    ButtonModule,
+  ],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
-  styles: [
-    `
-      .cal-day-selected,
-      .cal-day-selected:hover {
-        background-color: deeppink !important;
-      }
-    `,
-  ],
   encapsulation: ViewEncapsulation.None,
+  providers: [MessageService],
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit {
   view: CalendarView = CalendarView.Month;
 
   viewDate: Date = new Date();
 
-  events: CalendarEvent[] = [
-    {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      color: { ...colors['red'] },
-
-      allDay: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-    {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
-      color: { ...colors['yellow'] },
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      color: { ...colors['blue'] },
-      allDay: true,
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: addHours(new Date(), 2),
-      title: 'A draggable and resizable event',
-      color: { ...colors['yellow'] },
-
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-  ];
+  events: CalendarEventCustom[] = [];
 
   selectedDays: any = [];
 
   selectedMonthViewDay?: CalendarMonthViewDay;
 
-  dayClicked(day: CalendarMonthViewDay): void {
+  selectDay(day: CalendarMonthViewDay): void {
     this.selectedMonthViewDay = day;
     const selectedDateTime = this.selectedMonthViewDay.date.getTime();
     const dateIndex = this.selectedDays.findIndex(
@@ -108,7 +73,142 @@ export class CalendarComponent {
       day.cssClass = 'cal-day-selected';
       this.selectedMonthViewDay = day;
     }
+  }
 
-    console.log(this.selectedDays);
+  // ----------------------------------------------
+  @Input() days: CalendarDayCustom[] = [];
+  @Input() statistics: Statistics = {
+    hourlyRate: 0,
+    normalHours: 0,
+    overtimeHours: 0,
+    totalHours: 0,
+    otherFees: 0,
+    startDate: '',
+    endDate: '',
+  };
+  @Output() updateData: EventEmitter<any> = new EventEmitter();
+
+  fb = inject(UntypedFormBuilder);
+  sharedService = inject(SharedService);
+
+  messageService = inject(MessageService);
+
+  editingDays: boolean = false;
+
+  dataForm = this.fb.group({
+    title: [''],
+    startTime: [''],
+    endTime: [''],
+  });
+
+  items: MenuItem[] = [
+    {
+      icon: 'pi pi-pencil',
+      command: () => {
+        this.editingDays = !this.editingDays;
+      },
+    },
+    {
+      icon: 'pi pi-refresh',
+      command: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Update',
+          detail: 'Data Updated',
+        });
+      },
+    },
+    {
+      icon: 'pi pi-trash',
+      command: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Delete',
+          detail: 'Data Deleted',
+        });
+      },
+    },
+    {
+      icon: 'pi pi-upload',
+      routerLink: ['/fileupload'],
+    },
+    {
+      icon: 'pi pi-external-link',
+      target: '_blank',
+      url: 'http://angular.io',
+    },
+  ];
+
+  ngOnInit(): void {
+    this.days
+      .filter((day) => day.events.length > 0)
+      .forEach((day) => {
+        const event = {
+          title: `${day.events[0].title}`,
+          money: day.events[0].money,
+          startTime: `${day.events[0].startTime}`,
+          endTime: `${day.events[0].endTime}`,
+          workHours: day.events[0].workHours,
+          date: day.events[0].date,
+          dateString: day.events[0].dateString,
+          overtimeHours: day.events[0].overtimeHours,
+          normalHours: day.events[0].normalHours,
+          overtimeMoney: day.events[0].overtimeMoney,
+          start: new Date(day.events[0].dateString),
+        };
+        this.events = [...this.events, event];
+      });
+  }
+
+  clickDay(day: CalendarMonthViewDay) {
+    if (this.editingDays) {
+      this.selectDay(day);
+      return;
+    }
+
+    this.showDayInfo(day);
+  }
+
+  showDayInfo(day: CalendarMonthViewDay): void {
+    console.log(day);
+  }
+
+  getDateRange(): string {
+    return DateTimeHelper.generateDateRangeString(this.selectedDays);
+  }
+
+  formatDate(date: Date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${day}.${month}.`;
+  }
+
+  saveData(): void {
+    if (!this.dataForm.valid) {
+      return;
+    }
+
+    this.sharedService.showLoader();
+
+    this.selectedDays.forEach((day: any) => {
+      const event = CalendarDataHelper.calculateEvent(
+        this.dataForm.value,
+        this.statistics.hourlyRate,
+        day
+      );
+
+      this.events = [...this.events, event];
+    });
+
+    this.updateData.emit({ events: this.events, statistics: this.statistics });
+    this.selectedDays = [];
+    this.editingDays = false;
+    this.dataForm.reset();
+  }
+
+  cancelData(): void {
+    this.selectedDays = [];
+    this.editingDays = false;
+    this.dataForm.reset();
   }
 }

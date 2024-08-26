@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Statistics } from '../../../../interfaces/statistics.interface';
 
 @Component({
@@ -9,8 +9,8 @@ import { Statistics } from '../../../../interfaces/statistics.interface';
   styleUrl: './statistics.component.scss',
 })
 export class StatisticsComponent {
-  statistics: Statistics = {
-    hourlyRate: 6,
+  @Input() statistics: Statistics = {
+    hourlyRate: 0,
     normalHours: 0,
     overtimeHours: 0,
     totalHours: 0,

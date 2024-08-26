@@ -7,3 +7,16 @@ body > app-root > app-profile > div > div > div:nth-child(2) > p-avatar > div {
   width: 200px !important;
   height: 200px !important;
 }
+
+body
+  > app-root
+  > app-dashboard
+  > div
+  > div.shadow-2.border-round.mt-5
+  > app-calendar
+  > div
+  > p-speeddial {
+  position: fixed;
+  top: 90px;
+  right: 400px;
+}
