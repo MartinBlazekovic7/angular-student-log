@@ -1,3 +1,4 @@
+import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -22,7 +23,11 @@ import {
   CalendarDayCustom,
   CalendarEventCustom,
 } from '../../../../interfaces/calendar-data.interface';
-import { ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+} from '@angular/forms';
 import { Statistics } from '../../../../interfaces/statistics.interface';
 import { DateTimeHelper } from '../../../../helpers/datetime.helper';
 import { SharedService } from '../../../../services/shared.service';
@@ -31,8 +36,9 @@ import { ButtonModule } from 'primeng/button';
 import { CalendarDataHelper } from '../../../../helpers/calendar-data.helper';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
-import { TableModule } from 'primeng/table';
 import { DividerModule } from 'primeng/divider';
+import { CheckboxModule } from 'primeng/checkbox';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @Component({
   selector: 'app-calendar',
@@ -47,8 +53,11 @@ import { DividerModule } from 'primeng/divider';
     ButtonModule,
     DialogModule,
     InputTextareaModule,
-    TableModule,
     DividerModule,
+    CheckboxModule,
+    SelectButtonModule,
+    FormsModule,
+    TableModule,
   ],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
@@ -102,6 +111,12 @@ export class CalendarComponent implements OnInit, OnChanges {
   };
   @Output() updateData: EventEmitter<any> = new EventEmitter();
 
+  stateOptions: any[] = [
+    { label: 'Information', value: 'day-information' },
+    { label: 'Edit', value: 'edit' },
+  ];
+  dayInfoSubState: string = 'day-information';
+
   fb = inject(UntypedFormBuilder);
   sharedService = inject(SharedService);
 
@@ -114,6 +129,9 @@ export class CalendarComponent implements OnInit, OnChanges {
   changingHourlyRateWindow: boolean = false;
   exportingDataWindow: boolean = false;
   showingHelpWindow: boolean = false;
+
+  selectedDayWindow: boolean = false;
+  selectedDay: any;
 
   dataForm = this.fb.group({
     title: [''],
@@ -132,6 +150,12 @@ export class CalendarComponent implements OnInit, OnChanges {
 
   hourlyRateForm = this.fb.group({
     hourlyRate: [''],
+  });
+
+  selectedDayForm = this.fb.group({
+    startTime: [''],
+    endTime: [''],
+    title: [''],
   });
 
   ngOnInit(): void {
@@ -203,8 +227,55 @@ export class CalendarComponent implements OnInit, OnChanges {
     this.showDayInfo(day);
   }
 
-  showDayInfo(day: CalendarMonthViewDay): void {
-    console.log(day);
+  showDayInfo(day: any): void {
+    this.selectedDayWindow = true;
+    this.selectedDay = day;
+    console.log(this.selectedDay);
+
+    if (day.events.length > 0 && !day.events[0].isFreeDay) {
+      this.selectedDayForm.patchValue({
+        startTime: day.events[0].startTime,
+        endTime: day.events[0].endTime,
+        title: day.events[0].title,
+      });
+    }
+  }
+
+  updateDayInfo(): void {
+    if (!this.selectedDayForm.valid) {
+      return;
+    }
+
+    if (this.selectedDay.events.length > 0) {
+      this.events = this.events.filter(
+        (event) => event.dateString !== this.selectedDay.events[0].dateString
+      );
+    }
+
+    const event = CalendarDataHelper.calculateEvent(
+      this.selectedDayForm.value,
+      this.statistics.hourlyRate,
+      this.selectedDay
+    );
+
+    this.events = [...this.events, event];
+
+    this.selectedDayWindow = false;
+    this.selectedDay = null;
+    this.selectedDayForm.reset();
+    this.updateData.emit({ events: this.events, statistics: this.statistics });
+  }
+
+  deleteDayInfo(): void {
+    this.events = this.events.filter(
+      (event) => event.dateString !== this.selectedDay.events[0].dateString
+    );
+
+    this.updateData.emit({ events: this.events, statistics: this.statistics });
+
+    this.selectedDayWindow = false;
+    this.selectedDayForm.reset();
+    this.selectedDay = null;
   }
 
   getDateRange(): string {
@@ -348,9 +419,16 @@ export class CalendarComponent implements OnInit, OnChanges {
     this.changingHourlyRateWindow = false;
     this.exportingDataWindow = false;
     this.showingHelpWindow = false;
+    this.selectedDayWindow = false;
 
+    this.dataForm.reset();
+    this.selectedDayForm.reset();
     this.freeDaysForm.reset();
     this.otherFeesForm.reset();
     this.hourlyRateForm.reset();
+  }
+
+  get isFreeDay(): boolean {
+    return this.selectedDayForm.value.isFreeDay;
   }
 }

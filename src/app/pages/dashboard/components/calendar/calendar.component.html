@@ -260,4 +260,163 @@
   </form>
 </p-dialog>
 
+<p-dialog
+  header="Header"
+  [(visible)]="selectedDayWindow"
+  [modal]="true"
+  [style]="{ width: '50rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap">
+        <p-selectButton
+          [options]="stateOptions"
+          [(ngModel)]="dayInfoSubState"
+          optionLabel="label"
+          optionValue="value"
+        />
+      </span>
+    </div>
+  </ng-template>
+  <form
+    *ngIf="dayInfoSubState === 'edit'"
+    [formGroup]="selectedDayForm"
+    (ngSubmit)="updateDayInfo()"
+    autocomplete="on"
+  >
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="startTime" class="font-semibold w-6rem">Start time</label>
+      <input
+        pInputText
+        type="time"
+        id="startTime"
+        class="flex-auto"
+        formControlName="startTime"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="endTime" class="font-semibold w-6rem">End time</label>
+      <input
+        pInputText
+        type="time"
+        id="endTime"
+        class="flex-auto"
+        formControlName="endTime"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="title" class="font-semibold w-6rem">Description</label>
+      <input pInputText id="title" class="flex-auto" formControlName="title" />
+    </div>
+    <div
+      class="flex flex-row align-items-center w-100"
+      [ngClass]="
+        selectedDay && selectedDay.events.length > 0
+          ? 'justify-content-between'
+          : 'justify-content-end'
+      "
+    >
+      <p-button
+        *ngIf="selectedDay && selectedDay.events.length > 0"
+        label="Delete"
+        [text]="true"
+        severity="danger"
+        (onClick)="deleteDayInfo()"
+      />
+      <div>
+        <p-button
+          label="Cancel"
+          [text]="true"
+          severity="secondary"
+          (onClick)="closeDialog()"
+        />
+        <p-button
+          label="Save"
+          [outlined]="true"
+          severity="primary"
+          type="submit"
+        />
+      </div>
+    </div>
+  </form>
+  <div
+    class="p-fluid grid"
+    *ngIf="dayInfoSubState === 'day-information' && selectedDay"
+  >
+    @if( selectedDay.events.length > 0) {
+    <div class="col-12">
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Date</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].dateString }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Start time</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].startTime }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">End time</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].endTime }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Hours (Total/Normal/Overtime)</div>
+        <div class="text-lg text-right">
+          {{
+            selectedDay.events[0].normalHours +
+              selectedDay.events[0].overtimeHours
+          }}h | {{ selectedDay.events[0].normalHours }}h |
+          {{ selectedDay.events[0].overtimeHours }}h
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Money (Total/Normal/Overtime)</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].money }}&#8364; |
+          {{
+            selectedDay.events[0].money - selectedDay.events[0].overtimeMoney
+          }}&#8364; | {{ selectedDay.events[0].overtimeMoney }}&#8364;
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Free day</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].isFreeDay ? "Yes" : "No" }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+    </div>
+    } @else {
+    <div class="col-12">
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Date</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.date.toDateString() }}
+        </div>
+      </div>
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-center p-3">
+        <div class="font-bold text-lg">No data for this day.</div>
+      </div>
+    </div>
+    }
+  </div>
+</p-dialog>
+
 <p-toast />
