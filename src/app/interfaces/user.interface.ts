@@ -4,6 +4,9 @@ export interface UserProfile {
   lastName: string;
   email: string;
   photoURL: string;
+  isAdmin: boolean;
+  isStudent: boolean;
+  isGoogle: boolean;
   details: UserDetails;
   settings: UserSettings;
 }

@@ -70,6 +70,9 @@ export class LoginComponent {
                   lastName: displayName.split(' ')[1],
                   email,
                   photoURL,
+                  isAdmin: false,
+                  isStudent: false,
+                  isGoogle: true,
                   details: {
                     dateOfBirth: '',
                     address: '',

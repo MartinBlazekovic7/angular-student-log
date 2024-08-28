@@ -19,6 +19,7 @@ import { SharedService } from '../../../../services/shared.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { FirebaseErrorHelper } from '../../../../helpers/firebase-error.helper';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 @Component({
   selector: 'app-registration',
@@ -30,6 +31,7 @@ import { FirebaseErrorHelper } from '../../../../helpers/firebase-error.helper';
     InputTextModule,
     ButtonModule,
     ToastModule,
+    SelectButtonModule,
   ],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss',
@@ -52,9 +54,15 @@ export class RegistrationComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       confirmPassword: ['', Validators.required],
+      userType: ['student', Validators.required],
     },
     { validators: passwordsMatchValidator() }
   );
+
+  stateOptions: any[] = [
+    { label: 'Student', value: 'student' },
+    { label: 'Administrator', value: 'administrator' },
+  ];
 
   goToLoginCall() {
     this.goToLogin.emit(false);
@@ -87,6 +95,9 @@ export class RegistrationComponent {
             firstName,
             lastName,
             photoURL,
+            isAdmin: this.userType === 'administrator',
+            isStudent: this.userType === 'student',
+            isGoogle: false,
             details: {
               dateOfBirth: '',
               address: '',
@@ -137,5 +148,9 @@ export class RegistrationComponent {
 
   get confirmPassword() {
     return this.registerForm.get('confirmPassword');
+  }
+
+  get userType() {
+    return this.registerForm.get('userType')!.value;
   }
 }

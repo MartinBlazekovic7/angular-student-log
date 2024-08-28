@@ -212,6 +212,9 @@ export class ProfileComponent implements OnInit {
       lastName: this.lastName.value,
       email: this.user?.email ?? '',
       photoURL: this.user?.photoURL ?? '',
+      isAdmin: this.user?.isAdmin ?? false,
+      isStudent: this.user?.isStudent ?? false,
+      isGoogle: this.user?.isGoogle ?? false,
       details: {
         university: this.university.value,
         degree: this.degree.value,

@@ -9,3 +9,45 @@
 </ng-container>
 
 <app-loader></app-loader>
+
+<p-dialog
+  header="Header"
+  [(visible)]="showUserTypeForm"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap"> User type </span>
+    </div>
+  </ng-template>
+  <form
+    [formGroup]="userTypeForm"
+    (ngSubmit)="updateUserType()"
+    autocomplete="on"
+  >
+    <div class="flex flex-column align-items-center gap-3 mb-3 pt-1">
+      <label for="userType" class="font-semibold w-100"
+        >Please select for what purpose you want to use this app.</label
+      >
+      <div
+        class="w-100 flex flex-column justify-content-center align-items-center mb-3"
+      >
+        <p-selectButton
+          [options]="stateOptions"
+          formControlName="userType"
+          optionLabel="label"
+          optionValue="value"
+        />
+      </div>
+    </div>
+    <div class="flex flex-row justify-content-center align-items-center w-100">
+      <p-button
+        label="Save"
+        [outlined]="true"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+</p-dialog>
