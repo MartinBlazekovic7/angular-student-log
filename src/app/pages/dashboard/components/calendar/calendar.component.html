@@ -102,4 +102,118 @@
 </div>
 }
 
+<p-dialog
+  header="Header"
+  [(visible)]="addingOtherFeesWindow"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap"> Other fees </span>
+    </div>
+  </ng-template>
+  <form
+    [formGroup]="otherFeesForm"
+    (ngSubmit)="updateOtherFees()"
+    autocomplete="on"
+  >
+    <div class="flex align-items-center gap-3 mb-3 pt-1">
+      <label for="amount" class="font-semibold w-6rem">Amount</label>
+      <input
+        pInputText
+        type="number"
+        id="amount"
+        class="flex-auto"
+        formControlName="amount"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="reason" class="font-semibold w-6rem">Reason</label>
+      <input
+        pInputTextarea
+        id="reason"
+        class="flex-auto"
+        formControlName="reason"
+      />
+    </div>
+    <div class="flex flex-row justify-content-end align-items-center w-100">
+      <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        label="Save"
+        [outlined]="true"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+
+  <p-divider></p-divider>
+
+  @if(statistics.otherFees.length > 0) {
+  <p-table [value]="statistics.otherFees" [tableStyle]="{ width: '100%' }">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Reason</th>
+        <th>Amount</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-stat>
+      <tr>
+        <td>{{ stat.reason }}</td>
+        <td>{{ stat.amount }}&#8364;</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  }
+</p-dialog>
+
+<p-dialog
+  header="Header"
+  [(visible)]="changingHourlyRateWindow"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap"> Hourly rate </span>
+    </div>
+  </ng-template>
+  <form
+    [formGroup]="hourlyRateForm"
+    (ngSubmit)="updateHourlyRate()"
+    autocomplete="on"
+  >
+    <div class="flex align-items-center gap-3 mb-3 pt-1">
+      <label for="amount" class="font-semibold w-6rem">Hourly Rate</label>
+      <input
+        pInputText
+        type="number"
+        id="hourlyRate"
+        class="flex-auto"
+        formControlName="hourlyRate"
+      />
+    </div>
+    <div class="flex flex-row justify-content-end align-items-center w-100">
+      <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        label="Save"
+        [outlined]="true"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+</p-dialog>
+
 <p-toast />

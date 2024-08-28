@@ -87,13 +87,89 @@ export class CalendarDataHelper {
   ): Statistics {
     const updatedStatistics = { ...statistics };
 
+    updatedStatistics.normalHours = 0;
+    updatedStatistics.overtimeHours = 0;
+    updatedStatistics.totalHours = 0;
+
+    updatedStatistics.otherFeesTotal = updatedStatistics.otherFees.reduce(
+      (total, fee) => total + fee.amount,
+      0
+    );
+
     events.forEach((event) => {
       updatedStatistics.normalHours += event.normalHours;
       updatedStatistics.overtimeHours += event.overtimeHours;
       updatedStatistics.totalHours += event.workHours;
-      updatedStatistics.otherFees += event.otherFees;
     });
 
     return updatedStatistics;
+  }
+
+  public static updateEvents(events: any[], newHourlyRate: number): any[] {
+    return events.map((event) => {
+      const startDate = new Date(event.date);
+      const endDate = new Date(event.date);
+
+      const [startHour, startMinute] = event.startTime.split(':').map(Number);
+      const [endHour, endMinute] = event.endTime.split(':').map(Number);
+
+      startDate.setHours(startHour, startMinute, 0, 0);
+      endDate.setHours(endHour, endMinute, 0, 0);
+
+      if (endDate < startDate) {
+        endDate.setDate(endDate.getDate() + 1); // If end time is past midnight, move it to the next day
+      }
+
+      const isSunday = startDate.getDay() === 0;
+
+      // Calculate total work hours
+      const workHours =
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+
+      // Initialize overtime and normal hours
+      let overtimeHours = 0;
+      let normalHours = 0;
+      let totalMoney = 0;
+      let overtimeMoney = 0;
+
+      let currentTime = new Date(startDate);
+
+      while (currentTime < endDate) {
+        let nextTime = new Date(currentTime);
+        nextTime.setHours(currentTime.getHours() + 1);
+
+        if (nextTime > endDate) {
+          nextTime = endDate;
+        }
+
+        const currentHour = currentTime.getHours();
+        const isNightShift = currentHour >= 22 || currentHour < 6;
+        const currentRate =
+          isNightShift || isSunday ? newHourlyRate * 1.5 : newHourlyRate;
+
+        const hourFraction =
+          (nextTime.getTime() - currentTime.getTime()) / (1000 * 60 * 60);
+
+        if (isNightShift || isSunday) {
+          overtimeHours += hourFraction;
+          overtimeMoney += currentRate * hourFraction;
+        } else {
+          normalHours += hourFraction;
+        }
+
+        totalMoney += currentRate * hourFraction;
+
+        currentTime = nextTime;
+      }
+
+      return {
+        ...event, // Keep the original event data
+        money: totalMoney,
+        overtimeMoney: overtimeMoney,
+        workHours: workHours,
+        overtimeHours: overtimeHours,
+        normalHours: normalHours,
+      };
+    });
   }
 }

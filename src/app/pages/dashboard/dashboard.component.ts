@@ -131,7 +131,8 @@ export class DashboardComponent implements OnInit {
         normalHours: 0,
         overtimeHours: 0,
         totalHours: 0,
-        otherFees: 0,
+        otherFeesTotal: 0,
+        otherFees: [],
         startDate: '',
         endDate: '',
       },
@@ -169,7 +170,8 @@ export class DashboardComponent implements OnInit {
         normalHours: 0,
         overtimeHours: 0,
         totalHours: 0,
-        otherFees: 0,
+        otherFeesTotal: 0,
+        otherFees: [],
         startDate: '',
         endDate: '',
       },
@@ -212,10 +214,11 @@ export class DashboardComponent implements OnInit {
     this.dataService.updateUserMonthData(this.userAllMonthsData!).subscribe({
       next: () => {
         this.sharedService.hideLoader();
+        this.resetButtons();
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
-          detail: 'Successfully added days to calendar.',
+          detail: 'Successfully added data to calendar.',
         });
       },
       error: (error) => {
@@ -223,7 +226,7 @@ export class DashboardComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Error adding days to calendar.',
+          detail: 'Error adding data to calendar.',
         });
         console.error('Error updating data', error);
       },
@@ -252,5 +255,14 @@ export class DashboardComponent implements OnInit {
 
   toggleShowingHelp() {
     this.showingHelp = !this.showingHelp;
+  }
+
+  resetButtons() {
+    this.editingCalendar = false;
+    this.addingFreeDays = false;
+    this.addingOtherFees = false;
+    this.changingHourlyRate = false;
+    this.exportingData = false;
+    this.showingHelp = false;
   }
 }

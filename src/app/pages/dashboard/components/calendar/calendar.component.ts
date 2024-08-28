@@ -29,6 +29,10 @@ import { SharedService } from '../../../../services/shared.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CalendarDataHelper } from '../../../../helpers/calendar-data.helper';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TableModule } from 'primeng/table';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-calendar',
@@ -41,6 +45,10 @@ import { CalendarDataHelper } from '../../../../helpers/calendar-data.helper';
     ReactiveFormsModule,
     InputTextModule,
     ButtonModule,
+    DialogModule,
+    InputTextareaModule,
+    TableModule,
+    DividerModule,
   ],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.scss',
@@ -87,7 +95,8 @@ export class CalendarComponent implements OnInit, OnChanges {
     normalHours: 0,
     overtimeHours: 0,
     totalHours: 0,
-    otherFees: 0,
+    otherFeesTotal: 0,
+    otherFees: [],
     startDate: '',
     endDate: '',
   };
@@ -115,6 +124,15 @@ export class CalendarComponent implements OnInit, OnChanges {
     reason: [''],
   });
 
+  otherFeesForm = this.fb.group({
+    amount: [''],
+    reason: [''],
+  });
+
+  hourlyRateForm = this.fb.group({
+    hourlyRate: [''],
+  });
+
   ngOnInit(): void {
     this.days
       .filter((day) => day.events.length > 0)
@@ -136,6 +154,7 @@ export class CalendarComponent implements OnInit, OnChanges {
         };
         this.events = [...this.events, event];
       });
+    console.log(this.statistics);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -161,6 +180,7 @@ export class CalendarComponent implements OnInit, OnChanges {
   }
 
   handleChangingHourlyRate(): void {
+    this.hourlyRateForm.patchValue({ hourlyRate: this.statistics.hourlyRate });
     this.changingHourlyRateWindow = !this.changingHourlyRateWindow;
   }
 
@@ -218,11 +238,44 @@ export class CalendarComponent implements OnInit, OnChanges {
     this.dataForm.reset();
   }
 
-  saveOtherFees(): void {
-    /* 
-    this.statistics.otherFees = this.otherFeesForm.value.otherFees;
+  updateOtherFees(): void {
+    if (!this.otherFeesForm.valid) {
+      return;
+    }
+
+    this.sharedService.showLoader();
+
+    const otherFeesTotal =
+      this.statistics.otherFeesTotal + this.otherFeesForm.value.amount;
+
+    this.statistics.otherFees.push({
+      amount: this.otherFeesForm.value.amount,
+      reason: this.otherFeesForm.value.reason,
+    });
+    this.statistics.otherFeesTotal = otherFeesTotal;
+
+    this.addingOtherFeesWindow = false;
     this.updateData.emit({ events: this.events, statistics: this.statistics });
-    this.otherFeesForm.reset(); */
+    this.otherFeesForm.reset();
+  }
+
+  updateHourlyRate(): void {
+    if (!this.hourlyRateForm.valid) {
+      return;
+    }
+
+    this.sharedService.showLoader();
+
+    this.statistics.hourlyRate = this.hourlyRateForm.value.hourlyRate;
+
+    this.events = CalendarDataHelper.updateEvents(
+      this.events,
+      this.statistics.hourlyRate
+    );
+
+    this.changingHourlyRateWindow = false;
+    this.updateData.emit({ events: this.events, statistics: this.statistics });
+    this.hourlyRateForm.reset();
   }
 
   markAsFreeDay(): void {
@@ -282,5 +335,16 @@ export class CalendarComponent implements OnInit, OnChanges {
     this.selectedDays = [];
     this.editingDays = false;
     this.dataForm.reset();
+  }
+
+  closeDialog(): void {
+    this.addingFreeDaysWindow = false;
+    this.addingOtherFeesWindow = false;
+    this.changingHourlyRateWindow = false;
+    this.exportingDataWindow = false;
+    this.showingHelpWindow = false;
+
+    this.freeDaysForm.reset();
+    this.otherFeesForm.reset();
   }
 }

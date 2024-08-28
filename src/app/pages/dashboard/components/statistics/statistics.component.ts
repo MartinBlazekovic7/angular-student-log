@@ -14,7 +14,8 @@ export class StatisticsComponent {
     normalHours: 0,
     overtimeHours: 0,
     totalHours: 0,
-    otherFees: 0,
+    otherFeesTotal: 0,
+    otherFees: [],
     startDate: '',
     endDate: '',
   };
@@ -24,7 +25,8 @@ export class StatisticsComponent {
   getSalary(): number {
     return (
       this.statistics.hourlyRate * this.statistics.normalHours +
-      this.statistics.overtimeHours * this.statistics.hourlyRate * 1.5
+      this.statistics.overtimeHours * this.statistics.hourlyRate * 1.5 +
+      this.statistics.otherFeesTotal
     );
   }
 }
