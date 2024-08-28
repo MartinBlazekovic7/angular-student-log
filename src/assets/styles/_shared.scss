@@ -20,3 +20,30 @@ body
   top: 90px;
   right: 400px;
 }
+
+body
+  > app-root
+  > app-history
+  > div
+  > div:nth-child(3)
+  > div
+  > mwl-calendar-month-view
+  > div
+  > div
+  > div:nth-child(1)
+  > mwl-calendar-open-day-events
+  > div,
+body
+  > app-root
+  > app-history
+  > div
+  > div:nth-child(3)
+  > div
+  > mwl-calendar-month-view
+  > div
+  > div
+  > div:nth-child(5)
+  > mwl-calendar-open-day-events
+  > div {
+  display: none;
+}
