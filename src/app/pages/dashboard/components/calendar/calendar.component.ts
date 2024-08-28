@@ -108,7 +108,8 @@ export class CalendarComponent implements OnInit, OnChanges {
   messageService = inject(MessageService);
 
   editingDays: boolean = false;
-  addingFreeDaysWindow: boolean = false;
+  editingCalendarForm: boolean = false;
+  addingFreeDaysForm: boolean = false;
   addingOtherFeesWindow: boolean = false;
   changingHourlyRateWindow: boolean = false;
   exportingDataWindow: boolean = false;
@@ -154,7 +155,6 @@ export class CalendarComponent implements OnInit, OnChanges {
         };
         this.events = [...this.events, event];
       });
-    console.log(this.statistics);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -163,6 +163,7 @@ export class CalendarComponent implements OnInit, OnChanges {
 
   handleEditingCalendar(): void {
     this.editingDays = !this.editingDays;
+    this.editingCalendarForm = !this.editingCalendarForm;
     if (!this.editingCalendar) {
       this.cancelData();
     }
@@ -170,6 +171,7 @@ export class CalendarComponent implements OnInit, OnChanges {
 
   handleAddingFreeDays(): void {
     this.editingDays = !this.editingDays;
+    this.addingFreeDaysForm = !this.addingFreeDaysForm;
     if (!this.addingFreeDays) {
       this.cancelData();
     }
@@ -238,6 +240,37 @@ export class CalendarComponent implements OnInit, OnChanges {
     this.dataForm.reset();
   }
 
+  saveFreeDays(): void {
+    if (!this.freeDaysForm.valid) {
+      return;
+    }
+
+    this.selectedDays.forEach((day: any) => {
+      const event = {
+        title: 'Free Day',
+        money: 0,
+        startTime: '00:00',
+        endTime: '00:00',
+        workHours: 0,
+        overtimeHours: 0,
+        normalHours: 0,
+        overtimeMoney: 0,
+        date: new Date(day.date),
+        start: new Date(day.date),
+        dateString: new Date(day.date).toDateString(),
+        isFreeDay: true,
+        freeDayReason: this.freeDaysForm.value.reason,
+      };
+      this.events = [...this.events, event];
+    });
+
+    this.updateData.emit({ events: this.events, statistics: this.statistics });
+    this.selectedDays = [];
+    this.editingDays = false;
+    this.freeDaysForm.reset();
+    this.addingFreeDaysForm = false;
+  }
+
   updateOtherFees(): void {
     if (!this.otherFeesForm.valid) {
       return;
@@ -278,35 +311,6 @@ export class CalendarComponent implements OnInit, OnChanges {
     this.hourlyRateForm.reset();
   }
 
-  markAsFreeDay(): void {
-    if (!this.freeDaysForm.valid) {
-      return;
-    }
-
-    this.selectedDays.forEach((day: any) => {
-      const event = {
-        title: 'Free Day',
-        money: 0,
-        startTime: '00:00',
-        endTime: '00:00',
-        workHours: 0,
-        date: day.date,
-        dateString: day.dateString,
-        overtimeHours: 0,
-        normalHours: 0,
-        overtimeMoney: 0,
-        start: new Date(day.dateString),
-        isFreeDay: true,
-        freeDayReason: this.freeDaysForm.value.reason,
-      };
-      this.events = [...this.events, event];
-    });
-
-    this.updateData.emit({ events: this.events, statistics: this.statistics });
-    this.selectedDays = [];
-    this.editingDays = false;
-  }
-
   handleChange(changes: SimpleChanges): void {
     if (changes['editingCalendar'] && !changes['editingCalendar'].firstChange) {
       this.handleEditingCalendar();
@@ -338,7 +342,8 @@ export class CalendarComponent implements OnInit, OnChanges {
   }
 
   closeDialog(): void {
-    this.addingFreeDaysWindow = false;
+    this.editingCalendarForm = false;
+    this.addingFreeDaysForm = false;
     this.addingOtherFeesWindow = false;
     this.changingHourlyRateWindow = false;
     this.exportingDataWindow = false;
@@ -346,5 +351,6 @@ export class CalendarComponent implements OnInit, OnChanges {
 
     this.freeDaysForm.reset();
     this.otherFeesForm.reset();
+    this.hourlyRateForm.reset();
   }
 }

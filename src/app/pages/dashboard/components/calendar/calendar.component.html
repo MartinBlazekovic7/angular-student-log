@@ -1,7 +1,9 @@
 <ng-template #customCellTemplate let-day="day" let-locale="locale">
   <div class="cal-cell-top flex flex-column">
     <div>
-      <span class="cal-day-badge" *ngIf="day.events.length > 0"
+      <span
+        class="cal-day-badge"
+        *ngIf="day.events.length > 0 && !day.events[0].isFreeDay"
         >{{ day.events[0].startTime }} - {{ day.events[0].endTime }}</span
       >
       <span class="cal-day-number">{{ day.date.toString().slice(8, 10) }}</span>
@@ -11,7 +13,10 @@
       *ngIf="day.events.length > 0"
     >
       <div>
-        <h2>{{ day.events[0].money }}&#8364;</h2>
+        <h2 *ngIf="!day.events[0].isFreeDay">
+          {{ day.events[0].money }}&#8364;
+        </h2>
+        <h2 *ngIf="day.events[0].isFreeDay">Free day</h2>
       </div>
     </div>
   </div>
@@ -40,7 +45,12 @@
       Selected days: {{ getDateRange() }}
     </h2>
     <div class="flex justify-content-center align-items-center mb-3">
-      <form [formGroup]="dataForm" (ngSubmit)="saveData()" class="w-3 pb-3">
+      <form
+        *ngIf="editingCalendarForm"
+        [formGroup]="dataForm"
+        (ngSubmit)="saveData()"
+        class="w-3 pb-3"
+      >
         <div>
           <label class="block text-900 font-medium mb-2" for="startTime"
             >Start Time</label
@@ -80,6 +90,40 @@
           Don't worry about night shifts and weekend work. We will calculate
           everything for you.
         </small>
+        <div class="text-center mt-3">
+          <button
+            pButton
+            pRipple
+            label="Cancel"
+            class="p-button-outlined w-5 mr-1"
+            (click)="cancelData()"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Save"
+            type="submit"
+            class="w-5 ml-1"
+          ></button>
+        </div>
+      </form>
+      <form
+        *ngIf="addingFreeDaysForm"
+        [formGroup]="freeDaysForm"
+        (ngSubmit)="saveFreeDays()"
+        class="w-3 pb-3"
+      >
+        <div>
+          <label class="block text-900 font-medium mb-2" for="titlreasone"
+            >Reason</label
+          >
+          <input
+            class="w-full mb-3"
+            pInputText
+            type="text"
+            formControlName="reason"
+          />
+        </div>
         <div class="text-center mt-3">
           <button
             pButton
