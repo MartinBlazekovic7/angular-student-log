@@ -35,8 +35,51 @@
 </div>
 } @else {
 <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
-  <div class="flex flex-row justify-content-start align-items-center">
+  <div class="flex flex-row justify-content-between align-items-center">
     <h1>{{ currentMonth }} {{ currentYear }}</h1>
+    <div class="flex flex-row justify-content-end align-items-center">
+      <p-button
+        class="mr-2"
+        [icon]="editingCalendar ? 'pi pi-times' : 'pi pi-calendar-plus'"
+        [pTooltip]="editingCalendar ? 'Cancel' : 'Add multiple days'"
+        tooltipPosition="bottom"
+        (onClick)="toggleEditingCalendar()"
+      />
+      <p-button
+        class="mr-2"
+        [icon]="addingFreeDays ? 'pi pi-times' : 'pi pi-briefcase'"
+        [pTooltip]="addingFreeDays ? 'Cancel' : 'Add free days'"
+        tooltipPosition="bottom"
+        (onClick)="toggleAddingFreeDays()"
+      />
+      <p-button
+        class="mr-2"
+        icon="pi pi-money-bill"
+        pTooltip="Add other fees"
+        tooltipPosition="bottom"
+        (onClick)="toggleAddingOtherFees()"
+      />
+      <p-button
+        class="mr-2"
+        icon="pi pi-euro"
+        pTooltip="Change hourly rate"
+        tooltipPosition="bottom"
+        (onClick)="toggleChangingHourlyRate()"
+      />
+      <p-button
+        class="mr-2"
+        icon="pi pi-file-export"
+        pTooltip="Export data"
+        tooltipPosition="bottom"
+        (onClick)="toggleExportingData()"
+      />
+      <p-button
+        icon="pi pi-info-circle"
+        pTooltip="Help"
+        tooltipPosition="bottom"
+        (onClick)="toggleShowingHelp()"
+      />
+    </div>
   </div>
   <app-statistics
     *ngIf="currentMonthData"
@@ -47,6 +90,12 @@
       *ngIf="currentMonthData"
       [days]="currentMonthData.days"
       [statistics]="currentMonthData.statistics"
+      [editingCalendar]="editingCalendar"
+      [addingFreeDays]="addingFreeDays"
+      [addingOtherFees]="addingOtherFees"
+      [changingHourlyRate]="changingHourlyRate"
+      [exportingData]="exportingData"
+      [showingHelp]="showingHelp"
       (updateData)="updateData($event)"
     ></app-calendar>
   </div>

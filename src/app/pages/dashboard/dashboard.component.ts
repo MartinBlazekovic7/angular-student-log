@@ -18,6 +18,7 @@ import { SharedService } from '../../services/shared.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CalendarDataHelper } from '../../helpers/calendar-data.helper';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,6 +31,7 @@ import { CalendarDataHelper } from '../../helpers/calendar-data.helper';
     RippleModule,
     RouterModule,
     ToastModule,
+    TooltipModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -51,6 +53,13 @@ export class DashboardComponent implements OnInit {
 
   userAllMonthsData: MonthDataResponse | null = null;
   currentMonthData: MonthData | null = null;
+
+  editingCalendar: boolean = false;
+  addingFreeDays: boolean = false;
+  addingOtherFees: boolean = false;
+  changingHourlyRate: boolean = false;
+  exportingData: boolean = false;
+  showingHelp: boolean = false;
 
   ngOnInit() {
     this.sharedService.showLoader();
@@ -219,5 +228,29 @@ export class DashboardComponent implements OnInit {
         console.error('Error updating data', error);
       },
     });
+  }
+
+  toggleEditingCalendar() {
+    this.editingCalendar = !this.editingCalendar;
+  }
+
+  toggleAddingFreeDays() {
+    this.addingFreeDays = !this.addingFreeDays;
+  }
+
+  toggleAddingOtherFees() {
+    this.addingOtherFees = !this.addingOtherFees;
+  }
+
+  toggleChangingHourlyRate() {
+    this.changingHourlyRate = !this.changingHourlyRate;
+  }
+
+  toggleExportingData() {
+    this.exportingData = !this.exportingData;
+  }
+
+  toggleShowingHelp() {
+    this.showingHelp = !this.showingHelp;
   }
 }

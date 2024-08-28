@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
 import {
@@ -15,8 +16,7 @@ import {
   CalendarMonthViewDay,
   CalendarView,
 } from 'angular-calendar';
-import { MenuItem, MessageService } from 'primeng/api';
-import { SpeedDialModule } from 'primeng/speeddial';
+import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import {
   CalendarDayCustom,
@@ -37,7 +37,6 @@ import { CalendarDataHelper } from '../../../../helpers/calendar-data.helper';
   imports: [
     CommonModule,
     CalendarMonthModule,
-    SpeedDialModule,
     ToastModule,
     ReactiveFormsModule,
     InputTextModule,
@@ -48,7 +47,7 @@ import { CalendarDataHelper } from '../../../../helpers/calendar-data.helper';
   encapsulation: ViewEncapsulation.None,
   providers: [MessageService],
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, OnChanges {
   view: CalendarView = CalendarView.Month;
 
   viewDate: Date = new Date();
@@ -77,6 +76,12 @@ export class CalendarComponent implements OnInit {
 
   // ----------------------------------------------
   @Input() days: CalendarDayCustom[] = [];
+  @Input() editingCalendar: boolean = false;
+  @Input() addingFreeDays: boolean = false;
+  @Input() addingOtherFees: boolean = false;
+  @Input() changingHourlyRate: boolean = false;
+  @Input() exportingData: boolean = false;
+  @Input() showingHelp: boolean = false;
   @Input() statistics: Statistics = {
     hourlyRate: 0,
     normalHours: 0,
@@ -94,6 +99,11 @@ export class CalendarComponent implements OnInit {
   messageService = inject(MessageService);
 
   editingDays: boolean = false;
+  addingFreeDaysWindow: boolean = false;
+  addingOtherFeesWindow: boolean = false;
+  changingHourlyRateWindow: boolean = false;
+  exportingDataWindow: boolean = false;
+  showingHelpWindow: boolean = false;
 
   dataForm = this.fb.group({
     title: [''],
@@ -104,44 +114,6 @@ export class CalendarComponent implements OnInit {
   freeDaysForm = this.fb.group({
     reason: [''],
   });
-
-  items: MenuItem[] = [
-    {
-      icon: 'pi pi-pencil',
-      command: () => {
-        this.editingDays = !this.editingDays;
-      },
-    },
-    {
-      icon: 'pi pi-refresh',
-      command: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Update',
-          detail: 'Data Updated',
-        });
-      },
-    },
-    {
-      icon: 'pi pi-trash',
-      command: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Delete',
-          detail: 'Data Deleted',
-        });
-      },
-    },
-    {
-      icon: 'pi pi-upload',
-      routerLink: ['/fileupload'],
-    },
-    {
-      icon: 'pi pi-external-link',
-      target: '_blank',
-      url: 'http://angular.io',
-    },
-  ];
 
   ngOnInit(): void {
     this.days
@@ -164,6 +136,40 @@ export class CalendarComponent implements OnInit {
         };
         this.events = [...this.events, event];
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.handleChange(changes);
+  }
+
+  handleEditingCalendar(): void {
+    this.editingDays = !this.editingDays;
+    if (!this.editingCalendar) {
+      this.cancelData();
+    }
+  }
+
+  handleAddingFreeDays(): void {
+    this.editingDays = !this.editingDays;
+    if (!this.addingFreeDays) {
+      this.cancelData();
+    }
+  }
+
+  handleAddingOtherFees(): void {
+    this.addingOtherFeesWindow = !this.addingOtherFeesWindow;
+  }
+
+  handleChangingHourlyRate(): void {
+    this.changingHourlyRateWindow = !this.changingHourlyRateWindow;
+  }
+
+  handleExportingData(): void {
+    this.exportingDataWindow = !this.exportingDataWindow;
+  }
+
+  handleShowingHelp(): void {
+    this.showingHelpWindow = !this.showingHelpWindow;
   }
 
   clickDay(day: CalendarMonthViewDay) {
@@ -246,6 +252,30 @@ export class CalendarComponent implements OnInit {
     this.updateData.emit({ events: this.events, statistics: this.statistics });
     this.selectedDays = [];
     this.editingDays = false;
+  }
+
+  handleChange(changes: SimpleChanges): void {
+    if (changes['editingCalendar'] && !changes['editingCalendar'].firstChange) {
+      this.handleEditingCalendar();
+    }
+    if (changes['addingFreeDays'] && !changes['addingFreeDays'].firstChange) {
+      this.handleAddingFreeDays();
+    }
+    if (changes['addingOtherFees'] && !changes['addingOtherFees'].firstChange) {
+      this.handleAddingOtherFees();
+    }
+    if (
+      changes['changingHourlyRate'] &&
+      !changes['changingHourlyRate'].firstChange
+    ) {
+      this.handleChangingHourlyRate();
+    }
+    if (changes['exportingData'] && !changes['exportingData'].firstChange) {
+      this.handleExportingData();
+    }
+    if (changes['showingHelp'] && !changes['showingHelp'].firstChange) {
+      this.handleShowingHelp();
+    }
   }
 
   cancelData(): void {
