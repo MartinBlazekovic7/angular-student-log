@@ -101,6 +101,10 @@ export class CalendarComponent implements OnInit {
     endTime: [''],
   });
 
+  freeDaysForm = this.fb.group({
+    reason: [''],
+  });
+
   items: MenuItem[] = [
     {
       icon: 'pi pi-pencil',
@@ -154,6 +158,8 @@ export class CalendarComponent implements OnInit {
           overtimeHours: day.events[0].overtimeHours,
           normalHours: day.events[0].normalHours,
           overtimeMoney: day.events[0].overtimeMoney,
+          isFreeDay: day.events[0].isFreeDay,
+          freeDayReason: day.events[0].freeDayReason ?? '',
           start: new Date(day.events[0].dateString),
         };
         this.events = [...this.events, event];
@@ -204,6 +210,42 @@ export class CalendarComponent implements OnInit {
     this.selectedDays = [];
     this.editingDays = false;
     this.dataForm.reset();
+  }
+
+  saveOtherFees(): void {
+    /* 
+    this.statistics.otherFees = this.otherFeesForm.value.otherFees;
+    this.updateData.emit({ events: this.events, statistics: this.statistics });
+    this.otherFeesForm.reset(); */
+  }
+
+  markAsFreeDay(): void {
+    if (!this.freeDaysForm.valid) {
+      return;
+    }
+
+    this.selectedDays.forEach((day: any) => {
+      const event = {
+        title: 'Free Day',
+        money: 0,
+        startTime: '00:00',
+        endTime: '00:00',
+        workHours: 0,
+        date: day.date,
+        dateString: day.dateString,
+        overtimeHours: 0,
+        normalHours: 0,
+        overtimeMoney: 0,
+        start: new Date(day.dateString),
+        isFreeDay: true,
+        freeDayReason: this.freeDaysForm.value.reason,
+      };
+      this.events = [...this.events, event];
+    });
+
+    this.updateData.emit({ events: this.events, statistics: this.statistics });
+    this.selectedDays = [];
+    this.editingDays = false;
   }
 
   cancelData(): void {

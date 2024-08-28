@@ -15,6 +15,8 @@ export interface CalendarEventCustom extends CalendarEvent {
   overtimeHours: number;
   normalHours: number;
   overtimeMoney: number;
+  isFreeDay: boolean;
+  freeDayReason?: string;
 }
 
 export interface DataFormModel {

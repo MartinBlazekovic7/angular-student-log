@@ -75,6 +75,7 @@ export class CalendarDataHelper {
       overtimeHours: overtimeHours,
       normalHours: normalHours,
       overtimeMoney: overtimeMoney,
+      isFreeDay: false,
       date: new Date(day.date),
       start: new Date(day.date),
       dateString: new Date(day.date).toDateString(),
