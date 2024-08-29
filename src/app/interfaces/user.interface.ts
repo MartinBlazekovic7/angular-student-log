@@ -7,6 +7,7 @@ export interface UserProfile {
   isAdmin: boolean;
   isStudent: boolean;
   isGoogle: boolean;
+  teamId?: string;
   details: UserDetails;
   settings: UserSettings;
 }

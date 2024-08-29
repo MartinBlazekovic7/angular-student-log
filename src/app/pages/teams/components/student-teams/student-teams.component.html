@@ -1,0 +1,46 @@
+@if(user && !user.teamId) {
+<div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+  <div class="flex justify-content-end mb-4">
+    <button
+      pButton
+      pRipple
+      label="Back"
+      icon="pi pi-arrow-left"
+      class="p-button-text"
+      [routerLink]="['/']"
+    ></button>
+  </div>
+
+  <div class="mb-4">
+    <h2 class="text-center text-2xl font-bold mb-3">Teams</h2>
+    <p class="text-center">
+      You are not in a team yet. Fetch a code from your admin or join via URL.
+    </p>
+    <form [formGroup]="codeForm" (ngSubmit)="joinTeam()" autocomplete="on">
+      <div
+        class="w-100 flex flex-column justify-content-center align-items-center mb-3"
+      >
+        <input
+          id="code"
+          type="text"
+          placeholder="8 digit alphanumeric code"
+          pInputText
+          class="w-full mb-3"
+          formControlName="code"
+        />
+        <p-button
+          label="Save"
+          [severity]="'primary'"
+          [disabled]="!codeForm.valid"
+          (onClick)="confirmDialog($event)"
+          type="submit"
+        />
+      </div>
+    </form>
+  </div>
+</div>
+} @else {
+<p>yay im in a team {{ user?.teamId }}</p>
+}
+
+<p-confirmDialog />

@@ -47,3 +47,8 @@ body
   > div {
   display: none;
 }
+
+body > app-root > app-teams > div > app-admin-teams,
+body > app-root > app-teams > div > app-admin-teams {
+  width: 100% !important;
+}

@@ -56,7 +56,7 @@ export const routes: Routes = [
   {
     path: 'teams',
     data: { title: 'Teams' },
-    canActivate: [authGuard],
+    // canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/teams/teams.component').then((m) => m.TeamsComponent),
   },
