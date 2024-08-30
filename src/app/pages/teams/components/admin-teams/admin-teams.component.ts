@@ -29,6 +29,8 @@ import { DateTimeHelper } from '../../../../helpers/datetime.helper';
 import { CalendarEventCustom } from '../../../../interfaces/calendar-data.interface';
 import { MonthData } from '../../../../interfaces/month-data.interface';
 import { Statistics } from '../../../../interfaces/statistics.interface';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'app-admin-teams',
@@ -45,6 +47,8 @@ import { Statistics } from '../../../../interfaces/statistics.interface';
     StatisticsComponent,
     DividerModule,
     TableModule,
+    AvatarModule,
+    AvatarGroupModule,
   ],
   templateUrl: './admin-teams.component.html',
   styleUrl: './admin-teams.component.scss',
@@ -111,6 +115,19 @@ export class AdminTeamsComponent implements OnInit {
           console.log('User team:', this.userTeam);
         });
     }
+  }
+
+  selectUser(user: UserDTO) {
+    if (user === this.showingUser) {
+      this.showingUser = null;
+      this.events = [];
+      this.currentMonthData = null;
+      return;
+    }
+
+    this.showingUser = user as UserProfile;
+    this.sharedService.showLoader();
+    this.getData();
   }
 
   toggleDialog() {

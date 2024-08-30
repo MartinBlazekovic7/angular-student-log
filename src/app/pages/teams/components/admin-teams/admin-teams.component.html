@@ -29,8 +29,37 @@
 } @else {
 <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
   <div class="flex flex-row justify-content-between align-items-center">
-    <h1>{{ showingMonth }} {{ showingYear }}</h1>
+    <h1>
+      {{ showingMonth }} {{ showingYear }}
+      <span *ngIf="showingUser">
+        - {{ showingUser.firstName }} {{ showingUser.lastName }}</span
+      >
+    </h1>
+
     <div class="flex flex-row justify-content-end align-items-center">
+      <p-avatarGroup styleClass="mr-4">
+        <ng-container *ngFor="let user of userTeam!.users">
+          @if(!user.isAdmin) {
+          <div class="cursor-pointer" (click)="selectUser(user)">
+            @if(user.photoURL) {
+            <p-avatar
+              image="{{ user.photoURL }}"
+              size="large"
+              shape="circle"
+            ></p-avatar>
+            } @else {
+            <p-avatar
+              label="{{ user.firstName.charAt(0) }}{{
+                user.lastName.charAt(0)
+              }}"
+              size="large"
+              shape="circle"
+            ></p-avatar>
+            }
+          </div>
+          }
+        </ng-container>
+      </p-avatarGroup>
       <p-button
         class="mr-2"
         icon="pi pi-arrow-left"
