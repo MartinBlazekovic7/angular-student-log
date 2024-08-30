@@ -1,4 +1,5 @@
-import { Component, inject, Input } from '@angular/core';
+import { map } from 'rxjs';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { UserProfile } from '../../../../interfaces/user.interface';
 import {
   ReactiveFormsModule,
@@ -11,10 +12,11 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { RouterModule } from '@angular/router';
 import { Team, UserDTO } from '../../../../interfaces/teams.interface';
-import { switchMap } from 'rxjs';
-import { ConfirmationService } from 'primeng/api';
+import { OrganizationChartModule } from 'primeng/organizationchart';
+import { ConfirmationService, TreeNode } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SharedService } from '../../../../services/shared.service';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'app-student-teams',
@@ -26,12 +28,14 @@ import { SharedService } from '../../../../services/shared.service';
     InputTextModule,
     RouterModule,
     ConfirmDialogModule,
+    OrganizationChartModule,
+    AvatarModule,
   ],
   templateUrl: './student-teams.component.html',
   styleUrl: './student-teams.component.scss',
   providers: [ConfirmationService],
 })
-export class StudentTeamsComponent {
+export class StudentTeamsComponent implements OnInit {
   @Input() user: UserProfile | null = null;
 
   dataService = inject(DataService);
@@ -47,22 +51,65 @@ export class StudentTeamsComponent {
 
   showConfirmation = false;
 
+  selectedNodes!: TreeNode[];
+
+  data: TreeNode[] = [];
+
+  ngOnInit() {
+    if (!this.user) {
+      return;
+    }
+
+    if (this.user.teamId) {
+      this.getTeam(this.user.teamId);
+    }
+  }
+
   joinTeam() {
     const code = this.codeForm.get('code')?.value;
     if (!code) return;
 
+    this.getTeam(code);
+  }
+
+  getTeam(code: string) {
     this.dataService.getTeamByCode(code).subscribe({
       next: (response) => {
         this.team = response;
-
-        if (!this.team) {
-          return;
-        }
+        this.setData();
       },
       error: (error) => {
         console.error(error);
       },
     });
+  }
+
+  setData() {
+    const admin = this.team?.users.find((user) => user.isAdmin);
+    if (!admin) return;
+
+    this.data = [
+      {
+        expanded: true,
+        type: 'person',
+        data: {
+          image: admin.photoURL,
+          name: `${admin.firstName} ${admin.lastName}`,
+          title: 'Administrator',
+        },
+        children: this.team?.users
+          .filter((user) => !user.isAdmin)
+          .map((user) => ({
+            expanded: true,
+            type: 'person',
+            data: {
+              image: user.photoURL,
+              name: `${user.firstName} ${user.lastName}`,
+              title: 'Student',
+            },
+          })),
+      },
+    ];
   }
 
   confirmDialog(event: Event) {
