@@ -44,6 +44,7 @@ export class DataService {
   }
 
   updateUserMonthData(monthData: MonthDataResponse): Observable<void> {
+    console.log('Updating month data:', monthData);
     const ref = doc(this.firestore, Collections.MONTH_DATA, monthData.uid);
     return from(setDoc(ref, monthData));
   }

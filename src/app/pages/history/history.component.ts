@@ -23,6 +23,7 @@ import { DividerModule } from 'primeng/divider';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { Statistics } from '../../interfaces/statistics.interface';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-history',
@@ -36,6 +37,7 @@ import { Statistics } from '../../interfaces/statistics.interface';
     DividerModule,
     DialogModule,
     TableModule,
+    TagModule,
   ],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',

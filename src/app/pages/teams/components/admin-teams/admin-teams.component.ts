@@ -31,6 +31,9 @@ import { MonthData } from '../../../../interfaces/month-data.interface';
 import { Statistics } from '../../../../interfaces/statistics.interface';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { AvatarModule } from 'primeng/avatar';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { set } from 'date-fns';
 
 @Component({
   selector: 'app-admin-teams',
@@ -48,7 +51,9 @@ import { AvatarModule } from 'primeng/avatar';
     DividerModule,
     TableModule,
     AvatarModule,
+    TagModule,
     AvatarGroupModule,
+    ToastModule,
   ],
   templateUrl: './admin-teams.component.html',
   styleUrl: './admin-teams.component.scss',
@@ -115,6 +120,54 @@ export class AdminTeamsComponent implements OnInit {
           console.log('User team:', this.userTeam);
         });
     }
+  }
+
+  approveMonthData() {
+    if (!this.currentMonthData) {
+      return;
+    }
+
+    this.sharedService.showLoader();
+
+    this.userMonths = this.userMonths.map((month) => {
+      if (
+        month.month === this.currentMonthData?.month &&
+        month.year === this.currentMonthData?.year
+      ) {
+        month.isApproved = true;
+      }
+      return month;
+    });
+
+    this.currentMonthData.isApproved = true;
+    this.dataService
+      .updateUserMonthData({
+        months: this.userMonths,
+        uid: this.showingUser!.uid,
+      })
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Month data approved',
+          });
+          setTimeout(() => {
+            this.sharedService.hideLoader();
+          }, 500);
+        },
+        error: (error) => {
+          console.error('Error approving month data:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error approving month data',
+          });
+          setTimeout(() => {
+            this.sharedService.hideLoader();
+          }, 500);
+        },
+      });
   }
 
   selectUser(user: UserDTO) {

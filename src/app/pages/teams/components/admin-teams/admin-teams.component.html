@@ -95,21 +95,45 @@
   </div>
 
   @if(currentMonthData) {
-  <div class="flex justify-content-end align-items-center mt-3">
-    <p-button
-      class="mr-2"
-      icon="pi pi-money-bill"
-      pTooltip="Other fees"
-      tooltipPosition="bottom"
-      (onClick)="toggleOtherFees()"
-    />
-    <p-button
-      class="mr-2"
-      icon="pi pi-file-export"
-      pTooltip="Export data"
-      tooltipPosition="bottom"
-      (onClick)="toggleExportingData()"
-    />
+  <div class="flex justify-content-between align-items-center mt-3">
+    <div>
+      <p-tag
+        *ngIf="currentMonthData.isApproved"
+        severity="success"
+        value="Approved"
+      />
+      <p-tag
+        *ngIf="!currentMonthData.isApproved"
+        severity="danger"
+        value="Not Approved"
+      />
+    </div>
+
+    <div>
+      <p-button
+        *ngIf="!currentMonthData.isApproved"
+        class="mr-2"
+        label="Approve"
+        severity="success"
+        pTooltip="Approve"
+        tooltipPosition="bottom"
+        (onClick)="approveMonthData()"
+      />
+      <p-button
+        class="mr-2"
+        icon="pi pi-money-bill"
+        pTooltip="Other fees"
+        tooltipPosition="bottom"
+        (onClick)="toggleOtherFees()"
+      />
+      <p-button
+        class="mr-2"
+        icon="pi pi-file-export"
+        pTooltip="Export data"
+        tooltipPosition="bottom"
+        (onClick)="toggleExportingData()"
+      />
+    </div>
   </div>
   }
 </div>
@@ -300,3 +324,5 @@
     </div>
   </form>
 </p-dialog>
+
+<p-toast />

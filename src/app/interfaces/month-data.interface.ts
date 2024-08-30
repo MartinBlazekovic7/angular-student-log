@@ -7,6 +7,7 @@ export interface MonthData {
   year: number;
   days: CalendarDayCustom[];
   statistics: Statistics;
+  isApproved?: boolean;
 }
 
 export interface MonthDataResponse {
