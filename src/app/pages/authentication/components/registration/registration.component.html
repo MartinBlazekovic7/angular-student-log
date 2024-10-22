@@ -1,0 +1,173 @@
+<div
+  class="surface-ground px-4 py-5 md:px-6 lg:px-8 w-screen min-h-screen flex justify-content-center align-items-center"
+>
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="flex justify-content-end mb-2">
+      <button
+        pButton
+        pRipple
+        label="Back"
+        icon="pi pi-arrow-left"
+        class="p-button-text"
+        (click)="goToLoginCall()"
+      ></button>
+    </div>
+
+    <div class="text-center mb-5">
+      <img
+        src="assets/images/signup.png"
+        alt="studentlog logo as signup"
+        height="50"
+        class="mb-1"
+      />
+      <p class="text-600 font-medium line-height-3">Become a member.</p>
+    </div>
+
+    <div>
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="registerWithEmail()"
+        autocomplete="on"
+      >
+        <div class="w-100 flex justify-content-center align-items-center mb-3">
+          <p-selectButton
+            [options]="stateOptions"
+            formControlName="userType"
+            optionLabel="label"
+            optionValue="value"
+          />
+        </div>
+
+        <label for="firstName" class="block text-900 font-medium mb-2"
+          >First name</label
+        >
+        <input
+          id="firstName"
+          type="text"
+          placeholder="First name"
+          pInputText
+          class="w-full mb-3"
+          formControlName="firstName"
+        />
+        <ul
+          class="form__Errors"
+          *ngIf="
+            firstName &&
+            firstName.invalid &&
+            (firstName.dirty || firstName.touched)
+          "
+        >
+          <li class="form__Error" *ngIf="firstName?.errors?.['required']">
+            First Name is required
+          </li>
+        </ul>
+
+        <label for="lastName" class="block text-900 font-medium mb-2"
+          >Last name</label
+        >
+        <input
+          id="lastName"
+          type="text"
+          placeholder="Last name"
+          pInputText
+          class="w-full mb-3"
+          formControlName="lastName"
+        />
+        <ul
+          class="form__Errors"
+          *ngIf="
+            lastName && lastName.invalid && (lastName.dirty || lastName.touched)
+          "
+        >
+          <li class="form__Error" *ngIf="lastName?.errors?.['required']">
+            Last Name is required
+          </li>
+        </ul>
+
+        <label for="email1" class="block text-900 font-medium mb-2"
+          >Email</label
+        >
+        <input
+          id="email"
+          type="text"
+          placeholder="Email address"
+          pInputText
+          class="w-full mb-3"
+          formControlName="email"
+        />
+        <ul
+          class="form__Errors"
+          *ngIf="email && email.invalid && (email.dirty || email.touched)"
+        >
+          <li class="form__Error" *ngIf="email?.errors?.['required']">
+            E-mail address is required
+          </li>
+          <li
+            class="form__Error"
+            *ngIf="email?.errors?.['email'] || email?.errors?.['pattern']"
+          >
+            Please enter a valid e-mail address
+          </li>
+        </ul>
+
+        <label for="password" class="block text-900 font-medium mb-2"
+          >Password</label
+        >
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          pInputText
+          class="w-full mb-3"
+          formControlName="password"
+        />
+        <ul
+          class="form__Errors"
+          *ngIf="
+            password && password.invalid && (password.dirty || password.touched)
+          "
+        >
+          <li class="form__Error" *ngIf="password?.errors?.['required']">
+            Password is required
+          </li>
+        </ul>
+
+        <label for="confirmPassword" class="block text-900 font-medium mb-2"
+          >Confirm Password</label
+        >
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="Password"
+          pInputText
+          class="w-full mb-3"
+          formControlName="confirmPassword"
+        />
+        <ul
+          class="form__Errors"
+          *ngIf="
+            confirmPassword &&
+            confirmPassword.invalid &&
+            (confirmPassword.dirty || confirmPassword.touched)
+          "
+        >
+          <li class="form__Error" *ngIf="confirmPassword?.errors?.['required']">
+            Confirm Password is required
+          </li>
+        </ul>
+        <ul
+          class="form__Errors"
+          *ngIf="confirmPassword && !confirmPassword.invalid && registerForm.errors?.['passwordsDontMatch']"
+        >
+          <li class="form__Error">Passwords don't match</li>
+        </ul>
+
+        <div class="w-full flex justify-content-center">
+          <button pButton pRipple label="Submit" class="w-6"></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<p-toast />

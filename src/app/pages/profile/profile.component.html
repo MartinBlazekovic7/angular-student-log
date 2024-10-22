@@ -1,0 +1,217 @@
+<div
+  class="surface-ground px-4 py-5 md:px-6 lg:px-8 w-screen min-h-screen flex justify-content-center align-items-center"
+>
+  @if(user) {
+  <div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+    <div class="flex justify-content-end mb-4">
+      <button
+        pButton
+        pRipple
+        label="Back"
+        icon="pi pi-arrow-left"
+        class="p-button-text"
+        [routerLink]="['/']"
+      ></button>
+    </div>
+
+    <div class="text-center">
+      @if(user.photoURL) {
+      <p-avatar
+        image="{{ user.photoURL }}"
+        shape="circle"
+        size="xlarge"
+        styleClass="mb-3"
+      ></p-avatar>
+      } @else {
+      <p-avatar
+        label="{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}"
+        shape="circle"
+        size="xlarge"
+        styleClass="mb-3"
+      ></p-avatar>
+      }
+
+      <div
+        class="w-100 flex flex-row justify-content-center align-items-center"
+      >
+        <p-fileUpload
+          class="mr-1"
+          mode="basic"
+          name="profile"
+          auto="true"
+          customUpload="true"
+          chooseLabel="Upload"
+          accept="image/*"
+          (uploadHandler)="onUpload($event)"
+        ></p-fileUpload>
+        @if(user.photoURL) {
+        <button
+          pButton
+          pRipple
+          label="Remove"
+          type="button"
+          class="p-button-outlined ml-1"
+          icon="pi pi-times"
+          (click)="confirmDialog($event)"
+        ></button>
+        }
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <h2 class="text-center text-2xl font-bold mb-3">
+        {{ user.firstName }} {{ user.lastName }}
+      </h2>
+
+      <p-divider></p-divider>
+
+      <div class="flex flex-column">
+        @if(user.email) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">Email:</span>
+          <span class="text-lg text-600">{{ user.email }}</span>
+        </div>
+        <p-divider></p-divider>
+        } @if(user.details.university) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">University:</span>
+          <span class="text-lg text-600">{{ user.details.university }}</span>
+        </div>
+        <p-divider></p-divider>
+        } @if(user.details.degree) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">Degree:</span>
+          <span class="text-lg text-600">{{ user.details.degree }}</span>
+        </div>
+        <p-divider></p-divider>
+        } @if(user.details.companyName) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">Company name:</span>
+          <span class="text-lg text-600">{{ user.details.companyName }}</span>
+        </div>
+        <p-divider></p-divider>
+        } @if(user.details.hourlyRate) {
+        <div class="flex align-items-center justify-content-between py-2">
+          <span class="font-medium text-lg">Hourly rate:</span>
+          <span class="text-lg text-600"
+            >{{ user.details.hourlyRate }}&#8364;</span
+          >
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="text-center">
+      <button
+        pButton
+        pRipple
+        label="Edit"
+        icon="pi pi-pencil"
+        class="p-button"
+        (click)="openEditDialog()"
+      ></button>
+    </div>
+  </div>
+  }
+</div>
+
+<p-toast></p-toast>
+
+<p-dialog
+  header="Header"
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap">
+        Update your information.
+      </span>
+    </div>
+  </ng-template>
+  <form [formGroup]="userForm" (ngSubmit)="updateUser()" autocomplete="on">
+    <div class="flex align-items-center gap-3 mb-3 pt-1">
+      <label for="email" class="font-semibold w-6rem">Email</label>
+      <input
+        pInputText
+        id="email"
+        class="flex-auto"
+        formControlName="email"
+        pTooltip="You can't change your email address here."
+        placeholder="autoHide: true"
+        readonly
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="firstName" class="font-semibold w-6rem">First name</label>
+      <input
+        pInputText
+        id="firstName"
+        class="flex-auto"
+        formControlName="firstName"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="lastName" class="font-semibold w-6rem">Last name</label>
+      <input
+        pInputText
+        id="lastName"
+        class="flex-auto"
+        formControlName="lastName"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="university" class="font-semibold w-6rem">University</label>
+      <input
+        pInputText
+        id="university"
+        class="flex-auto"
+        formControlName="university"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="degree" class="font-semibold w-6rem">Degree</label>
+      <input
+        pInputText
+        id="degree"
+        class="flex-auto"
+        formControlName="degree"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="companyName" class="font-semibold w-6rem">Company name</label>
+      <input
+        pInputText
+        id="companyName"
+        class="flex-auto"
+        formControlName="companyName"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="hourlyRate" class="font-semibold w-6rem">Hourly rate</label>
+      <input
+        pInputText
+        id="hourlyRate"
+        class="flex-auto"
+        formControlName="hourlyRate"
+      />
+    </div>
+    <div class="flex flex-row justify-content-end align-items-center w-100">
+      <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (onClick)="closeEditDialog()"
+      />
+      <p-button
+        label="Save"
+        [outlined]="true"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-confirmDialog />

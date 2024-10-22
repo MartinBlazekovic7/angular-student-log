@@ -1,0 +1,118 @@
+<div class="card flex justify-content-center">
+  <p-sidebar #sidebarRef [(visible)]="sidebarVisible">
+    <ng-template pTemplate="headless">
+      <div class="flex flex-column h-full">
+        <div
+          class="flex align-items-center justify-content-center m-3 p-3 flex-shrink-0"
+        >
+          <img src="assets/images/logo.png" alt="studentlog logo" class="w-7" />
+
+          <!--           <span>
+            <p-button
+              type="button"
+              (onClick)="closeCallback($event)"
+              icon="pi pi-times"
+              rounded="true"
+              outlined="true"
+              styleClass="h-2rem w-2rem"
+            ></p-button>
+          </span> -->
+        </div>
+        <hr class="mb-3 mx-3 border-top-1 border-none surface-border" />
+        <div class="overflow-y-auto h-full flex flex-row align-items-center">
+          <ul class="list-none w-full p-3 m-0">
+            <li>
+              <ul class="list-none p-0 m-0 overflow-hidden">
+                <li>
+                  <a
+                    [routerLink]="['']"
+                    [routerLinkActive]="['selected-route']"
+                    (click)="closeSidebar()"
+                    pRipple
+                    class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                  >
+                    <i class="pi pi-home mr-2"></i>
+                    <span class="font-medium">Home</span>
+                  </a>
+                </li>
+                <li *ngIf="!user?.isAdmin">
+                  <a
+                    [routerLink]="['dashboard']"
+                    [routerLinkActive]="['selected-route']"
+                    (click)="closeSidebar()"
+                    pRipple
+                    class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                  >
+                    <i class="pi pi-chart-line mr-2"></i>
+                    <span class="font-medium">Dashboard</span>
+                  </a>
+                </li>
+                <li *ngIf="!user?.isAdmin">
+                  <a
+                    [routerLink]="['history']"
+                    [routerLinkActive]="['selected-route']"
+                    (click)="closeSidebar()"
+                    pRipple
+                    class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                  >
+                    <i class="pi pi-history mr-2"></i>
+                    <span class="font-medium">History</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    [routerLink]="['teams']"
+                    [routerLinkActive]="['selected-route']"
+                    (click)="closeSidebar()"
+                    pRipple
+                    class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                  >
+                    <i class="pi pi-users mr-2"></i>
+                    <span class="font-medium">Teams</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    [routerLink]="['settings']"
+                    [routerLinkActive]="['selected-route']"
+                    (click)="closeSidebar()"
+                    pRipple
+                    class="no-underline flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+                  >
+                    <i class="pi pi-cog mr-2"></i>
+                    <span class="font-medium">Settings</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div class="mt-auto">
+          <hr class="mb-3 mx-3 border-top-1 border-none surface-border" />
+          <a
+            [routerLink]="['profile']"
+            (click)="closeSidebar()"
+            pRipple
+            class="no-underline m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+          >
+            @if(user) { @if(user.photoURL) {
+            <p-avatar image="{{ user.photoURL }}" shape="circle" />
+            } @else {
+            <p-avatar
+              label="{{ user.firstName.charAt(0) }}{{
+                user.lastName.charAt(0)
+              }}"
+              shape="circle"
+            />
+            }
+
+            <span class="font-bold no-underline"
+              >{{ user.firstName }} {{ user.lastName }}
+            </span>
+            }
+          </a>
+        </div>
+      </div>
+    </ng-template>
+  </p-sidebar>
+</div>

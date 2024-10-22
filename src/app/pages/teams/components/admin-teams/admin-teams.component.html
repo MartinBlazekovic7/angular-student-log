@@ -1,0 +1,328 @@
+@if(user && !user.teamId) {
+<div class="surface-card p-4 shadow-2 border-round w-full lg:w-6">
+  <div class="flex justify-content-end mb-4">
+    <button
+      pButton
+      pRipple
+      label="Back"
+      icon="pi pi-arrow-left"
+      class="p-button-text"
+      [routerLink]="['/']"
+    ></button>
+  </div>
+
+  <div class="mb-4">
+    <h2 class="text-center text-2xl font-bold mb-3">Teams</h2>
+    <p class="text-center">
+      You are not in a team yet. Create one for your students.
+    </p>
+    <div class="flex w-100 justify-content-center align-items-center">
+      <p-button
+        [severity]="'primary'"
+        label="Create"
+        type="submit"
+        (click)="toggleDialog()"
+      />
+    </div>
+  </div>
+</div>
+} @else {
+<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+  <div class="flex flex-row justify-content-between align-items-center">
+    <h1>
+      {{ showingMonth }} {{ showingYear }}
+      <span *ngIf="showingUser">
+        - {{ showingUser.firstName }} {{ showingUser.lastName }}</span
+      >
+    </h1>
+
+    <div class="flex flex-row justify-content-end align-items-center">
+      <p-avatarGroup styleClass="mr-4">
+        <ng-container *ngFor="let user of userTeam!.users">
+          @if(!user.isAdmin) {
+          <div class="cursor-pointer" (click)="selectUser(user)">
+            @if(user.photoURL) {
+            <p-avatar
+              image="{{ user.photoURL }}"
+              size="large"
+              shape="circle"
+            ></p-avatar>
+            } @else {
+            <p-avatar
+              label="{{ user.firstName.charAt(0) }}{{
+                user.lastName.charAt(0)
+              }}"
+              size="large"
+              shape="circle"
+            ></p-avatar>
+            }
+          </div>
+          }
+        </ng-container>
+      </p-avatarGroup>
+      <p-button
+        class="mr-2"
+        icon="pi pi-arrow-left"
+        pTooltip="Previous month"
+        tooltipPosition="bottom"
+        (onClick)="changeMonth('previous')"
+      />
+      <p-button
+        class="mr-2"
+        icon="pi pi-arrow-right"
+        pTooltip="Next month"
+        tooltipPosition="bottom"
+        (onClick)="changeMonth('next')"
+      />
+    </div>
+  </div>
+  <app-statistics
+    *ngIf="currentMonthData"
+    [statistics]="currentMonthData.statistics"
+  ></app-statistics>
+  <div class="shadow-2 border-round mt-5"></div>
+  <div [ngSwitch]="view">
+    <div class="flex flex-column">
+      <mwl-calendar-month-view
+        *ngSwitchCase="'month'"
+        [viewDate]="viewDate"
+        [events]="events"
+        [cellTemplate]="customCellTemplate"
+        (dayClicked)="showDayInfo($event.day)"
+      >
+      </mwl-calendar-month-view>
+    </div>
+  </div>
+
+  @if(currentMonthData) {
+  <div class="flex justify-content-between align-items-center mt-3">
+    <div>
+      <p-tag
+        *ngIf="currentMonthData.isApproved"
+        severity="success"
+        value="Approved"
+      />
+      <p-tag
+        *ngIf="!currentMonthData.isApproved"
+        severity="danger"
+        value="Not Approved"
+      />
+    </div>
+
+    <div>
+      <p-button
+        *ngIf="!currentMonthData.isApproved"
+        class="mr-2"
+        label="Approve"
+        severity="success"
+        pTooltip="Approve"
+        tooltipPosition="bottom"
+        (onClick)="approveMonthData()"
+      />
+      <p-button
+        class="mr-2"
+        icon="pi pi-money-bill"
+        pTooltip="Other fees"
+        tooltipPosition="bottom"
+        (onClick)="toggleOtherFees()"
+      />
+      <p-button
+        class="mr-2"
+        icon="pi pi-file-export"
+        pTooltip="Export data"
+        tooltipPosition="bottom"
+        (onClick)="toggleExportingData()"
+      />
+    </div>
+  </div>
+  }
+</div>
+
+<ng-template #customCellTemplate let-day="day" let-locale="locale">
+  <div class="cal-cell-top flex flex-column">
+    <div>
+      <span
+        class="cal-day-badge"
+        *ngIf="day.events.length > 0 && !day.events[0].isFreeDay"
+        >{{ day.events[0].startTime }} - {{ day.events[0].endTime }}</span
+      >
+      <span class="cal-day-number">{{ day.date.toString().slice(8, 10) }}</span>
+    </div>
+    <div
+      class="flex flex-row justify-content-start align-items-center work-money"
+      *ngIf="day.events.length > 0"
+    >
+      <div>
+        <h2 *ngIf="!day.events[0].isFreeDay">
+          {{ day.events[0].money }}&#8364;
+        </h2>
+        <h2 *ngIf="day.events[0].isFreeDay">Free day</h2>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<p-dialog
+  header="Header"
+  [(visible)]="selectedDayWindow"
+  [modal]="true"
+  [style]="{ width: '50rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap">
+        <span>Day infomation.</span>
+      </span>
+    </div>
+  </ng-template>
+  <div class="p-fluid grid" *ngIf="selectedDay">
+    @if( selectedDay.events.length > 0) {
+    <div class="col-12">
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Date</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].dateString }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Start time</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].startTime }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">End time</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].endTime }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Hours (Total/Normal/Overtime)</div>
+        <div class="text-lg text-right">
+          {{
+            selectedDay.events[0].normalHours +
+              selectedDay.events[0].overtimeHours
+          }}h | {{ selectedDay.events[0].normalHours }}h |
+          {{ selectedDay.events[0].overtimeHours }}h
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Money (Total/Normal/Overtime)</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].money }}&#8364; |
+          {{
+            selectedDay.events[0].money - selectedDay.events[0].overtimeMoney
+          }}&#8364; | {{ selectedDay.events[0].overtimeMoney }}&#8364;
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Free day</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].isFreeDay ? "Yes" : "No" }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+    </div>
+    } @else {
+    <div class="col-12">
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Date</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.date.toDateString() }}
+        </div>
+      </div>
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-center p-3">
+        <div class="font-bold text-lg">No data for this day.</div>
+      </div>
+    </div>
+    }
+  </div>
+</p-dialog>
+
+<p-dialog
+  header="Header"
+  [(visible)]="addingOtherFeesWindow"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap"> Other fees </span>
+    </div>
+  </ng-template>
+  @if(currentMonthStatistics.otherFees.length > 0) {
+  <p-table
+    [value]="currentMonthStatistics.otherFees"
+    [tableStyle]="{ width: '100%' }"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Reason</th>
+        <th>Amount</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-stat>
+      <tr>
+        <td>{{ stat.reason }}</td>
+        <td>{{ stat.amount }}&#8364;</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  }
+</p-dialog>
+
+}
+
+<p-dialog
+  header="Header"
+  [(visible)]="createTeamDialog"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap"> Create team </span>
+    </div>
+  </ng-template>
+  <form [formGroup]="teamForm" (ngSubmit)="createTeam()" autocomplete="on">
+    <div class="flex align-items-center gap-3 mb-3 pt-1">
+      <label for="name" class="font-semibold w-6rem">Team name</label>
+      <input
+        pInputText
+        type="text"
+        id="name"
+        class="flex-auto"
+        formControlName="name"
+      />
+    </div>
+    <div class="flex flex-row justify-content-end align-items-center w-100">
+      <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        label="Save"
+        [outlined]="true"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast />

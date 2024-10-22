@@ -1,0 +1,99 @@
+@if(user && !user.teamId) {
+<div class="surface-card p-4 shadow-2 border-round w-full">
+  <div class="flex justify-content-end mb-4">
+    <button
+      pButton
+      pRipple
+      label="Back"
+      icon="pi pi-arrow-left"
+      class="p-button-text"
+      [routerLink]="['/']"
+    ></button>
+  </div>
+
+  <div class="mb-4">
+    <h2 class="text-center text-2xl font-bold mb-3">Teams</h2>
+    <p class="text-center">
+      You are not in a team yet. Fetch a code from your admin or join via URL.
+    </p>
+    <form [formGroup]="codeForm" (ngSubmit)="joinTeam()" autocomplete="on">
+      <div
+        class="w-100 flex flex-column justify-content-center align-items-center mb-3"
+      >
+        <input
+          id="code"
+          type="text"
+          placeholder="8 digit alphanumeric code"
+          pInputText
+          class="w-full mb-3"
+          formControlName="code"
+        />
+        <p-button
+          label="Save"
+          [severity]="'primary'"
+          [disabled]="!codeForm.valid"
+          (onClick)="confirmDialog($event)"
+          type="submit"
+        />
+      </div>
+    </form>
+  </div>
+</div>
+} @else {
+<div class="surface-card p-4 shadow-2 border-round w-full">
+  <div class="flex justify-content-end mb-4">
+    <button
+      pButton
+      pRipple
+      label="Back"
+      icon="pi pi-arrow-left"
+      class="p-button-text"
+      [routerLink]="['/']"
+    ></button>
+  </div>
+
+  <h1>
+    {{ team?.name }}
+  </h1>
+
+  <p-organizationChart [value]="data">
+    <ng-template let-node pTemplate="person">
+      <div class="p-2 text-center">
+        @if(node.data.image) {
+        <p-avatar
+          image="{{ node.data.image }}"
+          shape="circle"
+          class="mb-3 w-3rem h-3rem"
+        />
+        } @else {
+        <p-avatar
+          label="{{ node.data.name.charAt(0) }}{{
+            node.data.name.split(' ')[1].charAt(0)
+          }}"
+          shape="circle"
+          class="mb-3 w-3rem h-3rem"
+        />
+        }
+        <div class="font-bold">
+          {{ node.data.name }}
+        </div>
+        <div>
+          {{ node.data.title }}
+        </div>
+      </div>
+    </ng-template>
+  </p-organizationChart>
+
+  <div class="flex w-100 justify-content-center align-items-center">
+    <button
+      pButton
+      pRipple
+      label="History"
+      class="p-button"
+      [routerLink]="['/history']"
+    ></button>
+  </div>
+</div>
+}
+
+<p-confirmDialog />

@@ -1,0 +1,5 @@
+@if(inRegistration) {
+<app-registration (goToLogin)="goToLogin($event)"></app-registration>
+} @else {
+<app-login (goToRegistration)="goToRegistration($event)"></app-login>
+}

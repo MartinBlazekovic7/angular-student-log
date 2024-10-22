@@ -1,0 +1,422 @@
+<ng-template #customCellTemplate let-day="day" let-locale="locale">
+  <div class="cal-cell-top flex flex-column">
+    <div>
+      <span
+        class="cal-day-badge"
+        *ngIf="day.events.length > 0 && !day.events[0].isFreeDay"
+        >{{ day.events[0].startTime }} - {{ day.events[0].endTime }}</span
+      >
+      <span class="cal-day-number">{{ day.date.toString().slice(8, 10) }}</span>
+    </div>
+    <div
+      class="flex flex-row justify-content-start align-items-center work-money"
+      *ngIf="day.events.length > 0"
+    >
+      <div>
+        <h2 *ngIf="!day.events[0].isFreeDay">
+          {{ day.events[0].money }}&#8364;
+        </h2>
+        <h2 *ngIf="day.events[0].isFreeDay">Free day</h2>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div class="flex flex-column">
+  <div [ngSwitch]="view">
+    <mwl-calendar-month-view
+      *ngSwitchCase="'month'"
+      [viewDate]="viewDate"
+      [events]="events"
+      [cellTemplate]="customCellTemplate"
+      (dayClicked)="clickDay($event.day)"
+    >
+    </mwl-calendar-month-view>
+  </div>
+</div>
+
+@if (selectedDays.length > 0) {
+<div>
+  <div>
+    <h2 *ngIf="selectedDays.length === 1" class="px-5">
+      Selected day: {{ formatDate(selectedDays[0].date) }}
+    </h2>
+    <h2 *ngIf="selectedDays.length > 1" class="px-5">
+      Selected days: {{ getDateRange() }}
+    </h2>
+    <div class="flex justify-content-center align-items-center mb-3">
+      <form
+        *ngIf="editingCalendarForm"
+        [formGroup]="dataForm"
+        (ngSubmit)="saveData()"
+        class="w-3 pb-3"
+      >
+        <div>
+          <label class="block text-900 font-medium mb-2" for="startTime"
+            >Start Time</label
+          >
+          <input
+            class="w-full mb-3"
+            pInputText
+            type="time"
+            formControlName="startTime"
+          />
+        </div>
+        <div>
+          <label class="block text-900 font-medium mb-2" for="endTime"
+            >End Time</label
+          >
+          <input
+            class="w-full mb-3"
+            pInputText
+            type="time"
+            id="endTime"
+            aria-describedby="endTime-help"
+            formControlName="endTime"
+          />
+        </div>
+        <div>
+          <label class="block text-900 font-medium mb-2" for="title"
+            >Description</label
+          >
+          <input
+            class="w-full mb-3"
+            pInputText
+            type="text"
+            formControlName="title"
+          />
+        </div>
+        <small id="endTime-help text-center pb-3">
+          Don't worry about night shifts and weekend work. We will calculate
+          everything for you.
+        </small>
+        <div class="text-center mt-3">
+          <button
+            pButton
+            pRipple
+            label="Cancel"
+            class="p-button-outlined w-5 mr-1"
+            (click)="cancelData()"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Save"
+            type="submit"
+            class="w-5 ml-1"
+          ></button>
+        </div>
+      </form>
+      <form
+        *ngIf="addingFreeDaysForm"
+        [formGroup]="freeDaysForm"
+        (ngSubmit)="saveFreeDays()"
+        class="w-3 pb-3"
+      >
+        <div>
+          <label class="block text-900 font-medium mb-2" for="titlreasone"
+            >Reason</label
+          >
+          <input
+            class="w-full mb-3"
+            pInputText
+            type="text"
+            formControlName="reason"
+          />
+        </div>
+        <div class="text-center mt-3">
+          <button
+            pButton
+            pRipple
+            label="Cancel"
+            class="p-button-outlined w-5 mr-1"
+            (click)="cancelData()"
+          ></button>
+          <button
+            pButton
+            pRipple
+            label="Save"
+            type="submit"
+            class="w-5 ml-1"
+          ></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+}
+
+<p-dialog
+  header="Header"
+  [(visible)]="addingOtherFeesWindow"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap"> Other fees </span>
+    </div>
+  </ng-template>
+  <form
+    [formGroup]="otherFeesForm"
+    (ngSubmit)="updateOtherFees()"
+    autocomplete="on"
+  >
+    <div class="flex align-items-center gap-3 mb-3 pt-1">
+      <label for="amount" class="font-semibold w-6rem">Amount</label>
+      <input
+        pInputText
+        type="number"
+        id="amount"
+        class="flex-auto"
+        formControlName="amount"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="reason" class="font-semibold w-6rem">Reason</label>
+      <input
+        pInputTextarea
+        id="reason"
+        class="flex-auto"
+        formControlName="reason"
+      />
+    </div>
+    <div class="flex flex-row justify-content-end align-items-center w-100">
+      <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        label="Save"
+        [outlined]="true"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+
+  <p-divider></p-divider>
+
+  @if(statistics.otherFees.length > 0) {
+  <p-table [value]="statistics.otherFees" [tableStyle]="{ width: '100%' }">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Reason</th>
+        <th>Amount</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-stat>
+      <tr>
+        <td>{{ stat.reason }}</td>
+        <td>{{ stat.amount }}&#8364;</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  }
+</p-dialog>
+
+<p-dialog
+  header="Header"
+  [(visible)]="changingHourlyRateWindow"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap"> Hourly rate </span>
+    </div>
+  </ng-template>
+  <form
+    [formGroup]="hourlyRateForm"
+    (ngSubmit)="updateHourlyRate()"
+    autocomplete="on"
+  >
+    <div class="flex align-items-center gap-3 mb-3 pt-1">
+      <label for="amount" class="font-semibold w-6rem">Hourly Rate</label>
+      <input
+        pInputText
+        type="number"
+        id="hourlyRate"
+        class="flex-auto"
+        formControlName="hourlyRate"
+      />
+    </div>
+    <div class="flex flex-row justify-content-end align-items-center w-100">
+      <p-button
+        label="Cancel"
+        [text]="true"
+        severity="secondary"
+        (onClick)="closeDialog()"
+      />
+      <p-button
+        label="Save"
+        [outlined]="true"
+        severity="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+</p-dialog>
+
+<p-dialog
+  header="Header"
+  [(visible)]="selectedDayWindow"
+  [modal]="true"
+  [style]="{ width: '50rem' }"
+>
+  <ng-template pTemplate="header">
+    <div class="inline-flex align-items-center justify-content-center gap-2">
+      <span class="font-bold white-space-nowrap">
+        <p-selectButton
+          [options]="stateOptions"
+          [(ngModel)]="dayInfoSubState"
+          optionLabel="label"
+          optionValue="value"
+        />
+      </span>
+    </div>
+  </ng-template>
+  <form
+    *ngIf="dayInfoSubState === 'edit'"
+    [formGroup]="selectedDayForm"
+    (ngSubmit)="updateDayInfo()"
+    autocomplete="on"
+  >
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="startTime" class="font-semibold w-6rem">Start time</label>
+      <input
+        pInputText
+        type="time"
+        id="startTime"
+        class="flex-auto"
+        formControlName="startTime"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="endTime" class="font-semibold w-6rem">End time</label>
+      <input
+        pInputText
+        type="time"
+        id="endTime"
+        class="flex-auto"
+        formControlName="endTime"
+      />
+    </div>
+    <div class="flex align-items-center gap-3 mb-3">
+      <label for="title" class="font-semibold w-6rem">Description</label>
+      <input pInputText id="title" class="flex-auto" formControlName="title" />
+    </div>
+    <div
+      class="flex flex-row align-items-center w-100"
+      [ngClass]="
+        selectedDay && selectedDay.events.length > 0
+          ? 'justify-content-between'
+          : 'justify-content-end'
+      "
+    >
+      <p-button
+        *ngIf="selectedDay && selectedDay.events.length > 0"
+        label="Delete"
+        [text]="true"
+        severity="danger"
+        (onClick)="deleteDayInfo()"
+      />
+      <div>
+        <p-button
+          label="Cancel"
+          [text]="true"
+          severity="secondary"
+          (onClick)="closeDialog()"
+        />
+        <p-button
+          label="Save"
+          [outlined]="true"
+          severity="primary"
+          type="submit"
+        />
+      </div>
+    </div>
+  </form>
+  <div
+    class="p-fluid grid"
+    *ngIf="dayInfoSubState === 'day-information' && selectedDay"
+  >
+    @if( selectedDay.events.length > 0) {
+    <div class="col-12">
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Date</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].dateString }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Start time</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].startTime }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">End time</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].endTime }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Hours (Total/Normal/Overtime)</div>
+        <div class="text-lg text-right">
+          {{
+            selectedDay.events[0].normalHours +
+              selectedDay.events[0].overtimeHours
+          }}h | {{ selectedDay.events[0].normalHours }}h |
+          {{ selectedDay.events[0].overtimeHours }}h
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Money (Total/Normal/Overtime)</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].money }}&#8364; |
+          {{
+            selectedDay.events[0].money - selectedDay.events[0].overtimeMoney
+          }}&#8364; | {{ selectedDay.events[0].overtimeMoney }}&#8364;
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Free day</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.events[0].isFreeDay ? "Yes" : "No" }}
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+    </div>
+    } @else {
+    <div class="col-12">
+      <div class="flex align-items-center justify-content-between p-3">
+        <div class="font-bold text-lg">Date</div>
+        <div class="text-lg text-right">
+          {{ selectedDay.date.toDateString() }}
+        </div>
+      </div>
+      <p-divider></p-divider>
+      <div class="flex align-items-center justify-content-center p-3">
+        <div class="font-bold text-lg">No data for this day.</div>
+      </div>
+    </div>
+    }
+  </div>
+</p-dialog>
+
+<p-toast />

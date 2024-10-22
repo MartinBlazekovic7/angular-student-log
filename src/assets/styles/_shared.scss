@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body > app-root > app-profile > div > div > div:nth-child(2) > p-avatar > div {
+  width: 200px !important;
+  height: 200px !important;
+}
+
+body
+  > app-root
+  > app-dashboard
+  > div
+  > div.shadow-2.border-round.mt-5
+  > app-calendar
+  > div
+  > p-speeddial {
+  position: fixed;
+  top: 90px;
+  right: 400px;
+}
+
+body
+  > app-root
+  > app-history
+  > div
+  > div:nth-child(3)
+  > div
+  > mwl-calendar-month-view
+  > div
+  > div
+  > div:nth-child(1)
+  > mwl-calendar-open-day-events
+  > div,
+body
+  > app-root
+  > app-history
+  > div
+  > div:nth-child(3)
+  > div
+  > mwl-calendar-month-view
+  > div
+  > div
+  > div:nth-child(5)
+  > mwl-calendar-open-day-events
+  > div {
+  display: none;
+}
+
+body > app-root > app-teams > div > app-admin-teams,
+body > app-root > app-teams > div > app-admin-teams {
+  width: 100% !important;
+}

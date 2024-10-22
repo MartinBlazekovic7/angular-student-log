@@ -1,0 +1,40 @@
+@if(isLoggedIn) {
+<p-menubar>
+  <ng-template pTemplate="start">
+    <div class="flex align-items-center">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-bars"
+        class="p-button-rounded p-button-text"
+        (click)="toggleSidebar()"
+      ></button>
+      <span>{{ pageTitle }}</span>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="end">
+    <div class="flex align-items-center">
+      <a
+        (click)="menu.toggle($event)"
+        pRipple
+        class="cursor-pointer w-full h-full border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple"
+      >
+        @if(user) { @if(user.photoURL) {
+        <p-avatar image="{{ user.photoURL }}" shape="circle" />
+        } @else {
+        <p-avatar
+          label="{{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}"
+          shape="circle"
+        />
+        } }
+      </a>
+    </div>
+  </ng-template>
+</p-menubar>
+<p-menu #menu [model]="items" [popup]="true" class="z-5" />
+
+} @else {
+<div class="navbar-not-logged">
+  <img src="assets/images/logo.png" alt="studentlog logo" />
+</div>
+}

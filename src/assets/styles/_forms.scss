@@ -1,0 +1,17 @@
+.form__Errors {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.form__Error {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+input.ng-invalid.ng-touched,
+input.ng-dirty.ng-invalid {
+  border-color: #e74c3c;
+}

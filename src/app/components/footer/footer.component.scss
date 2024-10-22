@@ -1,0 +1,22 @@
+.footer {
+  background-color: #f9fafb;
+  color: #333;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 0.75rem;
+  border-top: 1px solid #e0e0e0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer img {
+  height: 24px;
+  vertical-align: middle;
+}
+
+.footer br {
+  margin-top: 5px;
+}

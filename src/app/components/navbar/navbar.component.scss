@@ -1,0 +1,50 @@
+.p-menubar {
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 20px;
+}
+
+.p-menubar img {
+  vertical-align: middle;
+}
+
+.p-menubar span {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-left: 10px;
+}
+
+.p-menubar .p-menubar-start img {
+  margin-right: 10px;
+}
+
+.p-button-rounded {
+  margin-right: 10px;
+}
+
+.p-menubar-end img {
+  border-radius: 50%;
+}
+
+.navbar-not-logged {
+  background-color: #f9fafb;
+  color: #333;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-not-logged img {
+  height: 30px;
+  vertical-align: middle;
+}
+
+.navbar-not-logged br {
+  margin-top: 5px;
+}
