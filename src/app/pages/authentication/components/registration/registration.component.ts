@@ -116,6 +116,11 @@ export class RegistrationComponent {
       .subscribe({
         next: () => {
           this.sharedService.hideLoader();
+          if (this.userType === 'administrator') {
+            this.router.navigate(['/teams']);
+            return;
+          }
+
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {

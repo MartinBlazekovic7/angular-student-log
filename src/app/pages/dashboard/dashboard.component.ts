@@ -69,6 +69,7 @@ export class DashboardComponent implements OnInit {
       this.dataService
         .getData(Collections.USERS, user?.uid)
         .subscribe((userData) => {
+          this.sharedService.hideLoader();
           if (!userData) return;
 
           this.user = userData as UserProfile;

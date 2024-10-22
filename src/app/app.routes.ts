@@ -20,7 +20,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     data: { title: 'Dashboard' },
-    //canActivate: [authGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/dashboard/dashboard.component').then(
         (m) => m.DashboardComponent
@@ -47,7 +47,7 @@ export const routes: Routes = [
   {
     path: 'history',
     data: { title: 'History' },
-    //canActivate: [authGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/history/history.component').then(
         (m) => m.HistoryComponent
@@ -56,7 +56,7 @@ export const routes: Routes = [
   {
     path: 'teams',
     data: { title: 'Teams' },
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/teams/teams.component').then((m) => m.TeamsComponent),
   },

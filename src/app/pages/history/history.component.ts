@@ -24,6 +24,7 @@ import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { Statistics } from '../../interfaces/statistics.interface';
 import { TagModule } from 'primeng/tag';
+import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-history',
@@ -50,6 +51,7 @@ export class HistoryComponent implements OnInit {
   authService = inject(AuthService);
   sharedService = inject(SharedService);
   messageService = inject(MessageService);
+  excelService = inject(ExcelService);
 
   user: UserProfile | null = null;
 
@@ -79,6 +81,8 @@ export class HistoryComponent implements OnInit {
   selectedDay: any = null;
 
   addingOtherFeesWindow: boolean = false;
+
+  exportDialogVisible: boolean = false;
 
   ngOnInit() {
     this.sharedService.showLoader();
@@ -172,7 +176,21 @@ export class HistoryComponent implements OnInit {
     }, 500);
   }
 
-  toggleExportingData() {}
+  toggleExportingData() {
+    this.exportDialogVisible = !this.exportDialogVisible;
+  }
+
+  closeExportDialog() {
+    this.exportDialogVisible = false;
+  }
+
+  exportToExcel() {
+    this.excelService.generateExcel(
+      this.currentMonthData!.days,
+      'September_2024'
+    );
+    this.closeExportDialog();
+  }
 
   toggleOtherFees() {
     this.addingOtherFeesWindow = true;

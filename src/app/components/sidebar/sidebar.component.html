@@ -35,7 +35,7 @@
                     <span class="font-medium">Home</span>
                   </a>
                 </li>
-                <li>
+                <li *ngIf="!user?.isAdmin">
                   <a
                     [routerLink]="['dashboard']"
                     [routerLinkActive]="['selected-route']"
@@ -47,7 +47,7 @@
                     <span class="font-medium">Dashboard</span>
                   </a>
                 </li>
-                <li>
+                <li *ngIf="!user?.isAdmin">
                   <a
                     [routerLink]="['history']"
                     [routerLinkActive]="['selected-route']"

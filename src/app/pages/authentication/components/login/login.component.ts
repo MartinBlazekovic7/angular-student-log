@@ -120,9 +120,19 @@ export class LoginComponent {
     }
 
     this.authService.signInWithEmailAndPassword(email, password).subscribe({
-      next: () => {
-        this.sharedService.hideLoader();
-        this.router.navigate(['/dashboard']);
+      next: (response) => {
+        this.dataService
+          .getData(Collections.USERS, response.user?.uid)
+          .subscribe((userData) => {
+            if (!userData) return;
+
+            this.sharedService.hideLoader();
+            if (userData['isAdmin']) {
+              this.router.navigate(['/teams']);
+              return;
+            }
+            this.router.navigate(['/dashboard']);
+          });
       },
       error: (error) => {
         this.sharedService.hideLoader();

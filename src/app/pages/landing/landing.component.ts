@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { UserProfile } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-landing',
@@ -23,6 +24,8 @@ export class LandingComponent implements OnInit {
   authService = inject(AuthService);
 
   isLoggedIn = false;
+
+  user: UserProfile | null = null;
 
   ngOnInit() {
     this.authService.authStatus$.subscribe((user) => {
